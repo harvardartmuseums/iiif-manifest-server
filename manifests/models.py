@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from urllib.parse import urlparse
 from elasticsearch import Elasticsearch
 
 # Create your models here.
@@ -7,9 +8,11 @@ from elasticsearch import Elasticsearch
 ELASTICSEARCH_URL = getattr(settings, 'ELASTICSEARCH_URL', 'localhost:9200')
 ELASTICSEARCH_INDEX = getattr(settings, 'ELASTICSEARCH_INDEX', 'manifests')
 
+server_options = urlparse(ELASTICSEARCH_URL)
+
 # Connect to elasticsearch db
 def get_connection():
-    return Elasticsearch(ELASTICSEARCH_URL)
+    return Elasticsearch(host=server_options.hostname, http_auth=(server_options.username, server_options.password), port=server_options.port)
 
 # Gets the content of a manifest, returns JSON
 def get_manifest(manifest_id, source):

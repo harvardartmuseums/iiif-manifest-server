@@ -1,11 +1,9 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from manifests import huam
-from manifests import mets
-from manifests import mods
 from manifests import models
 import json
-import urllib2
+import urllib3
 
 # Create your views here.
 
@@ -131,58 +129,25 @@ def clean_url(request, view_type):
     return HttpResponseRedirect(cleaned)
 
 ## HELPER FUNCTIONS ##
-# Gets METS XML from DRS
-def get_mets(document_id, source):
-    mets_url = METS_DRS_URL+document_id
-    try:
-        response = urllib2.urlopen(mets_url)
-    except urllib2.HTTPError, err:
-        if err.code == 500 or err.code == 404:
-            # document does not exist in DRS, might need to add more error codes
-            # TODO: FDS often seems to fail on its first request...maybe try again? 
-            return (False, HttpResponse("The document ID %s does not exist" % document_id, status=404))
-
-    response_doc = response.read()
-    return (True, response_doc)
-
-# IDS can only deep zoom on JP2 images
-def mets_jp2_check(document_id):
-    api_url = METS_API_URL+document_id
-    response = urllib2.urlopen(api_url)
-    response_doc = response.read()
-    # probably don't actually need to parse this as an XML document
-    # just look for this particular string in the response
-    if "<img_mimetype>jp2</img_mimetype>" in response_doc:
-        return True
-    else:
-        return False
-
-# Gets MODS XML from Presto API
-def get_mods(document_id, source):
-    mods_url = MODS_DRS_URL+source+"/"+document_id
-    #print mods_url
-    try:
-        response = urllib2.urlopen(mods_url)
-    except urllib2.HTTPError, err:
-        if err.code == 500 or err.code == 403: ## TODO
-            # document does not exist in DRS
-            return (False, HttpResponse("The document ID %s does not exist" % document_id, status=404))
-
-    mods = response.read()
-    return (True, mods)
-
 # Gets HUAM JSON from HUAM API
 def get_huam(document_id, source):
     huam_url = HUAM_API_URL+document_id+"?apikey="+HUAM_API_KEY
-    try:
-        response = urllib2.urlopen(huam_url)
-    except urllib2.HTTPError, err:
-        if err.code == 500 or err.code == 403: ## TODO
-            # document does not exist in DRS
-            return (False, HttpResponse("The document ID %s does not exist" % document_id, status=404))
 
-    huam = response.read()
-    return (True, huam)
+    http = urllib3.PoolManager()
+    response = http.request('GET', huam_url)
+
+    huam = response.data
+    return (True, huam.decode('utf8'))
+
+    # try:
+    #     response = urllib2.urlopen(huam_url)
+    # except urllib2.HTTPError, err:
+    #     if err.code == 500 or err.code == 403: ## TODO
+    #         # document does not exist in DRS
+    #         return (False, HttpResponse("The document ID %s does not exist" % document_id, status=404))
+
+    # huam = response.read()
+    # return (True, huam)
 
 # Adds headers to Response for returning JSON that other Mirador instances can access
 def add_headers(response):
@@ -200,17 +165,7 @@ def get_manifest(document_id, source, force_refresh, host):
     if not has_manifest or force_refresh:
         # If not, get MODS, METS, or HUAM JSON
         data_type = sources[source]
-        if data_type == "mods":
-            ## TODO: check image types??
-            (success, response) = get_mods(document_id, source)
-        elif data_type == "mets":
-            # check if mets object has jp2 images, only those will work in image server
-            has_jp2 = mets_jp2_check(document_id)
-            if not has_jp2:
-                return (has_jp2, HttpResponse("The document ID %s does not have JP2 images" % document_id, status=404), document_id, source)
-            
-            (success, response) = get_mets(document_id, source)
-        elif data_type == "huam":
+        if data_type == "huam":
             (success, response) = get_huam(document_id, source)
         else:
             success = False
@@ -220,17 +175,7 @@ def get_manifest(document_id, source, force_refresh, host):
             return (success, response, document_id, source) # This is actually the 404 HttpResponse, so return and end the function
  
         # Convert to shared canvas model if successful
-        if data_type == "mods":
-            converted_json = mods.main(response, document_id, source, host)
-            # check if this is, in fact, a PDS object masked as a hollis request
-            # If so, get the manifest with the DRS METS ID and return that
-            json_doc = json.loads(converted_json)
-            if 'pds' in json_doc:
-                id = json_doc['pds']
-                return get_manifest(id, 'drs', False, host)
-        elif data_type == "mets":
-            converted_json = mets.main(response, document_id, source, host)
-        elif data_type == "huam":
+        if data_type == "huam":
             converted_json = huam.main(response, document_id, source, host)
         else:
             pass

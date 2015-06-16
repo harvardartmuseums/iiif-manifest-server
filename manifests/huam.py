@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import json, sys
-import urllib2
+import urllib3
 
 imageHash = {}
 
@@ -11,6 +11,8 @@ imageInfoSuffix = "/info.json"
 manifestUriBase = ""
 serviceBase = imageUriBase
 profileLevel = "http://library.stanford.edu/iiif/image-api/1.1/conformance.html#level1"
+
+http = urllib3.PoolManager()
 
 def main(data, document_id, source, host):
 	global imageHash 
@@ -47,17 +49,9 @@ def main(data, document_id, source, host):
 			info['label'] = im["publiccaption"]
 		else:
 			info['label'] = str(counter+1)
-		response = urllib2.urlopen(im["baseimageurl"])
-		ids_url = response.geturl()
-		url_idx = ids_url.rfind('/')
-		q_idx = ids_url.rfind('?') # and before any ? in URL
-		if q_idx != -1:
-			image_id = ids_url[url_idx+1:q_idx] 
-		else:
-			image_id = ids_url[url_idx+1:]
-
-		info['image'] = image_id
-		canvasInfo.append(info)
+			info['image'] = im["idsid"]
+			info['baseuri'] = im["iiifbaseuri"]
+			canvasInfo.append(info)
 
 	# can add metadata key/value pairs
 	mfjson = {
@@ -79,8 +73,10 @@ def main(data, document_id, source, host):
 	canvases = []
 
 	for cvs in canvasInfo:
-		response = urllib2.urlopen(imageUriBase + cvs['image'] + imageInfoSuffix)
-		infojson = json.load(response)
+		response = http.request('GET', cvs['baseuri'] + imageInfoSuffix)
+		huam_image = response.data
+
+		infojson = json.loads(huam_image.decode('utf-8'))
 		cvsjson = {
 			"@id": manifest_uri + "/canvas/canvas-%s.json" % cvs['image'],
 			"@type": "sc:Canvas",

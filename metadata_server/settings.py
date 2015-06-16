@@ -24,7 +24,7 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -91,3 +91,6 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
 )
+
+ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL_STAGING')
+ELASTICSEARCH_INDEX = os.environ.get('ELASTICSEARCH_IIIF_INDEX')
