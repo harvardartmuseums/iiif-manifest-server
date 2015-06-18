@@ -106,16 +106,16 @@ def refresh(request, document_type, document_id):
 # Force refresh all records from a single source
 # WARNING: this could take a long time
 # Pull all METS, MODS or HUAM JSON, rerun conversion script, and store in db
-def refresh_by_source(request, source):
-    document_ids = models.get_all_manifest_ids_with_type(source)
+def refresh_by_source(request, document_type):
+    document_ids = models.get_all_manifest_ids_with_type(document_type)
     counter = 0
     host = request.META['HTTP_HOST']
     for id in document_ids:
-        (success, response_doc, real_id, real_source) = get_manifest(id, source, True,  host)
+        (success, response_doc, real_id, real_source) = get_manifest(id, document_type, True,  host)
         if success:
             counter = counter + 1
 
-    response = HttpResponse("Refreshed %s out of %s total documents in %s" % (counter, len(document_ids), source))
+    response = HttpResponse("Refreshed %s out of %s total documents in %s" % (counter, len(document_ids), document_type))
     return response
 
 # this is a hack because the javascript uses relative paths for the PNG files, and Django creates the incorrect URL for them
