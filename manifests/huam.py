@@ -60,7 +60,25 @@ def main(data, document_id, source, host):
 		"@type":"sc:Manifest",
 		"label":manifestLabel,
 		"attribution":attribution,
-		"description":huam_json["provenance"],
+		"description":huam_json["description"],
+		"metadata": [
+			{
+				"label":"Classification",
+				"value":huam_json["classification"]
+			},
+			{
+				"label":"Credit Line",
+				"value":huam_json["creditline"]
+			},
+			{
+				"label":"Provenance", 
+				"value":huam_json["provenance"]
+			},
+			{
+				"label":"Object Number", 
+				"value":huam_json["objectnumber"]
+			}
+		],
 		"sequences": [
 			{
 				"@id": manifest_uri + "/sequence/normal.json",
