@@ -48,13 +48,15 @@ def view(request, view_type, document_id):
 
 # Returns a IIIF manifest of a METS, MODS or HUAM JSON object
 # Checks if DB has it, otherwise creates it
-def manifest(request, document_id):
-    parts = document_id.split(":")
+def manifest(request, document_type, document_id):
+    # parts = document_id.split(":")
     host = request.META['HTTP_HOST']
-    if len(parts) != 2:
-        return HttpResponse("Invalid document ID. Format: [data source]:[ID]", status=404)
-    source = parts[0]
-    id = parts[1]
+    # if len(parts) != 2:
+    #     return HttpResponse("Invalid document ID. Format: [data source]:[ID]", status=404)
+    # source = parts[0]
+    # id = parts[1]
+    source = document_type
+    id = document_id
     (success, response_doc, real_id, real_source) = get_manifest(id, source, False, host)
     if success:
         response = HttpResponse(response_doc)
@@ -164,21 +166,21 @@ def get_manifest(document_id, source, force_refresh, host):
 
     if not has_manifest or force_refresh:
         # If not, get MODS, METS, or HUAM JSON
-        data_type = sources[source]
-        if data_type == "huam":
-            (success, response) = get_huam(document_id, source)
-        else:
-            success = False
-            response = HttpResponse("Invalid source type", status=404)
+        # data_type = sources[source]
+        # if data_type == "huam":
+        (success, response) = get_huam(document_id, source)
+        # else:
+        #     success = False
+        #     response = HttpResponse("Invalid source type", status=404)
 
         if not success:
             return (success, response, document_id, source) # This is actually the 404 HttpResponse, so return and end the function
  
         # Convert to shared canvas model if successful
-        if data_type == "huam":
-            converted_json = huam.main(response, document_id, source, host)
-        else:
-            pass
+        # if data_type == "huam":
+        converted_json = huam.main(response, document_id, source, host)
+        # else:
+        #     pass
         # Store to elasticsearch
         models.add_or_update_manifest(document_id, converted_json, source)
         # Return the documet_id and source in case this is a hollis record
