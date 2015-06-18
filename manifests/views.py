@@ -51,10 +51,6 @@ def view(request, view_type, document_id):
 def manifest(request, document_type, document_id):
     # parts = document_id.split(":")
     host = request.META['HTTP_HOST']
-    # if len(parts) != 2:
-    #     return HttpResponse("Invalid document ID. Format: [data source]:[ID]", status=404)
-    # source = parts[0]
-    # id = parts[1]
     source = document_type
     id = document_id
     (success, response_doc, real_id, real_source) = get_manifest(id, source, False, host)
@@ -68,11 +64,6 @@ def manifest(request, document_type, document_id):
 # Delete any document from db
 def delete(request, document_type, document_id):
     # Check if manifest exists
-    # parts = document_id.split(":")
-    # if len(parts) != 2:
-    #     return HttpResponse("Invalid document ID. Format: [data source]:[ID]", status=404)
-    # source = parts[0]
-    # id = parts[1]
     source = document_type
     id = document_id
     has_manifest = models.manifest_exists(id, source)
@@ -86,12 +77,7 @@ def delete(request, document_type, document_id):
 # Force refresh a single document
 # Pull METS, MODS or HUAM JSON, rerun conversion script, and store in db
 def refresh(request, document_type, document_id):
-    # parts = document_id.split(":")
     host = request.META['HTTP_HOST']
-    # if len(parts) != 2:
-    #     return HttpResponse("Invalid document ID. Format: [data source]:[ID]", status=404)
-    # source = parts[0]
-    # id = parts[1]
     source = document_type
     id = document_id
     (success, response_doc, real_id, real_source) = get_manifest(id, source, True, host)
@@ -145,16 +131,6 @@ def get_huam(document_id, source):
     huam = response.data
     return (True, huam.decode('utf8'))
 
-    # try:
-    #     response = urllib2.urlopen(huam_url)
-    # except urllib2.HTTPError, err:
-    #     if err.code == 500 or err.code == 403: ## TODO
-    #         # document does not exist in DRS
-    #         return (False, HttpResponse("The document ID %s does not exist" % document_id, status=404))
-
-    # huam = response.read()
-    # return (True, huam)
-
 # Adds headers to Response for returning JSON that other Mirador instances can access
 def add_headers(response):
     response["Access-Control-Allow-Origin"] = "*"
@@ -169,26 +145,17 @@ def get_manifest(document_id, source, force_refresh, host):
     ## TODO: add last modified check
 
     if not has_manifest or force_refresh:
-        # If not, get MODS, METS, or HUAM JSON
-        # data_type = sources[source]
-        # if data_type == "huam":
         (success, response) = get_huam(document_id, source)
-        # else:
-        #     success = False
-        #     response = HttpResponse("Invalid source type", status=404)
 
         if not success:
             return (success, response, document_id, source) # This is actually the 404 HttpResponse, so return and end the function
  
         # Convert to shared canvas model if successful
-        # if data_type == "huam":
         converted_json = huam.main(response, document_id, source, host)
-        # else:
-        #     pass
+
         # Store to elasticsearch
         models.add_or_update_manifest(document_id, converted_json, source)
-        # Return the documet_id and source in case this is a hollis record
-        # that also has METS/PDS
+
         return (success, converted_json, document_id, source)
     else:
         # return JSON from db
