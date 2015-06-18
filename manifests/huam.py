@@ -11,6 +11,7 @@ imageInfoSuffix = "/info.json"
 manifestUriBase = ""
 serviceBase = imageUriBase
 profileLevel = "http://library.stanford.edu/iiif/image-api/1.1/conformance.html#level1"
+attributionBase = "Harvard Art Museums"
 
 http = urllib3.PoolManager()
 
@@ -21,7 +22,7 @@ def main(data, document_id, source, host):
 	manifestUriBase = "http://%s/manifests/" % host
 
 	huam_json = json.loads(data)
-	attribution = huam_json["creditline"]
+	attribution = attributionBase
 
 	manifestLabel = huam_json["title"]
 	#genres = dom.xpath('/mods:mods/mods:genre/text()', namespaces=ALLNS)
@@ -63,6 +64,10 @@ def main(data, document_id, source, host):
 		"description":huam_json["description"],
 		"metadata": [
 			{
+				"label":"Date",
+				"value":huam_json["dated"]
+			},
+			{
 				"label":"Classification",
 				"value":huam_json["classification"]
 			},
@@ -79,6 +84,7 @@ def main(data, document_id, source, host):
 				"value":huam_json["objectnumber"]
 			}
 		],
+		"within": "http://www.harvardartmuseums.org/collections",
 		"sequences": [
 			{
 				"@id": manifest_uri + "/sequence/normal.json",
