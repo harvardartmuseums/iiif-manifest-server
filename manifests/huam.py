@@ -36,6 +36,7 @@ def main(data, document_id, source, host):
 	## TODO: add viewingDirection
 
 	manifest_uri = manifestUriBase + "%s/%s" % (source, document_id)
+	print(manifest_uri)
 
 	## List of different image labels
 	## @displayLabel = Full Image, @note = Color digital image available, @note = Harvard Map Collection copy image
