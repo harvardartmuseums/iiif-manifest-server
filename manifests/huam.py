@@ -51,9 +51,10 @@ def main(data, document_id, source, host):
 			info['label'] = im["publiccaption"]
 		else:
 			info['label'] = str(counter+1)
-			info['image'] = im["idsid"]
-			info['baseuri'] = im["iiifbaseuri"]
-			canvasInfo.append(info)
+			
+		info['image'] = im["idsid"]
+		info['baseuri'] = im["iiifbaseuri"]
+		canvasInfo.append(info)
 
 	# can add metadata key/value pairs
 	mfjson = {
