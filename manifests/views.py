@@ -66,13 +66,15 @@ def manifest(request, document_type, document_id):
         return response_doc # 404 HttpResponse
             
 # Delete any document from db
-def delete(request, document_id):
+def delete(request, document_type, document_id):
     # Check if manifest exists
-    parts = document_id.split(":")
-    if len(parts) != 2:
-        return HttpResponse("Invalid document ID. Format: [data source]:[ID]", status=404)
-    source = parts[0]
-    id = parts[1]
+    # parts = document_id.split(":")
+    # if len(parts) != 2:
+    #     return HttpResponse("Invalid document ID. Format: [data source]:[ID]", status=404)
+    # source = parts[0]
+    # id = parts[1]
+    source = document_type
+    id = document_id
     has_manifest = models.manifest_exists(id, source)
 
     if has_manifest:
@@ -83,13 +85,15 @@ def delete(request, document_id):
 
 # Force refresh a single document
 # Pull METS, MODS or HUAM JSON, rerun conversion script, and store in db
-def refresh(request, document_id):
-    parts = document_id.split(":")
+def refresh(request, document_type, document_id):
+    # parts = document_id.split(":")
     host = request.META['HTTP_HOST']
-    if len(parts) != 2:
-        return HttpResponse("Invalid document ID. Format: [data source]:[ID]", status=404)
-    source = parts[0]
-    id = parts[1]
+    # if len(parts) != 2:
+    #     return HttpResponse("Invalid document ID. Format: [data source]:[ID]", status=404)
+    # source = parts[0]
+    # id = parts[1]
+    source = document_type
+    id = document_id
     (success, response_doc, real_id, real_source) = get_manifest(id, source, True, host)
 
     if success:
