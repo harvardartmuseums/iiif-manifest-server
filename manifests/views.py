@@ -7,44 +7,9 @@ import urllib3
 
 # Create your views here.
 
-METS_DRS_URL = "http://fds.lib.harvard.edu/fds/deliver/"
-METS_API_URL = "http://pds.lib.harvard.edu/pds/get/"
-MODS_DRS_URL = "http://webservices.lib.harvard.edu/rest/MODS/"
 HUAM_API_URL = "http://api.harvardartmuseums.org/object/"
 HUAM_API_KEY = "7a519500-933a-11e3-b8ce-c9be9b362aa7"
 
-sources = {"drs": "mets", "via": "mods", "hollis": "mods", "huam" : "huam"}
-
-# view any number of MODS, METS, or HUAM objects
-def view(request, view_type, document_id):
-    doc_ids = document_id.split(';')
-    manifests = {}
-    host = request.META['HTTP_HOST']
-    for doc_id in doc_ids:
-        parts = doc_id.split(':')
-        if len(parts) != 2:
-            continue # not a valid id, don't display
-        source = parts[0]
-        id = parts[1]
-        #print source, id
-        (success, response, real_id, real_source) = get_manifest(id, source, False, host)
-        if success:
-            title = models.get_manifest_title(real_id, real_source)
-            uri = "http://%s/manifests/%s:%s" % (host,real_source,real_id)
-            manifests[uri] = title
-
-    if len(manifests) > 0:
-        # Check if its an experimental/dev Mirador codebase, otherwise use production
-        if (view_type == "view-dev"):
-            return render(request, 'manifests/dev.html', {'manifests' : manifests})
-        elif (view_type == "view-annotator"):
-            return render(request, 'manifests/annotator.html', {'manifests' : manifests})
-        elif (view_type == "view-m1"):
-            return render(request, 'manifests/m1.html', {'manifests' : manifests})
-        else:
-            return render(request, 'manifests/manifest.html', {'manifests' : manifests})
-    else:
-        return HttpResponse("The requested document ID(s) %s could not be displayed" % document_id, status=404) # 404 HttpResponse object
 
 # Returns a IIIF manifest of a METS, MODS or HUAM JSON object
 # Checks if DB has it, otherwise creates it
@@ -103,22 +68,6 @@ def refresh_by_source(request, document_type):
 
     response = HttpResponse("Refreshed %s out of %s total documents in %s" % (counter, len(document_ids), document_type))
     return response
-
-# this is a hack because the javascript uses relative paths for the PNG files, and Django creates the incorrect URL for them
-# Need to find a better and more permanent solution
-def get_image(request, view_type, filename):
-    if view_type == "view-dev":
-        return HttpResponseRedirect("/static/manifests/dev/images/%s" % filename)
-    elif view_type == "view-annotator":
-        return HttpResponseRedirect("/static/manifests/annotator/images/%s" % filename)
-    elif view_type == "view-m1":
-        return HttpResponseRedirect("/static/manifests/m1/images/%s" % filename)
-    else:
-        return HttpResponseRedirect("/static/manifests/prod/images/%s" % filename)
-
-def clean_url(request, view_type):
-    cleaned = "/static" + request.path.replace("//","/").replace("view-","")
-    return HttpResponseRedirect(cleaned)
 
 ## HELPER FUNCTIONS ##
 # Gets HUAM JSON from HUAM API
