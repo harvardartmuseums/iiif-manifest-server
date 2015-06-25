@@ -37,10 +37,12 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'manifests',
+    'corsheaders',
 )
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -102,3 +104,7 @@ if os.environ.get('PYTHON_ENV') == "staging":
 
 if os.environ.get('PYTHON_ENV') == "development":
     ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL_DEV')
+
+
+# CORS
+CORS_ORIGIN_ALLOW_ALL = True
