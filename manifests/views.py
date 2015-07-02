@@ -76,8 +76,11 @@ def get_huam(document_id, source):
 
     http = urllib3.PoolManager()
     response = http.request('GET', huam_url)
-
     huam = response.data
+
+    if (huam.decode('utf8')==''):
+        return (False, HttpResponse("The document ID %s does not exist" % document_id, status=404))
+
     return (True, huam.decode('utf8'))
 
 # Adds headers to Response for returning JSON that other Mirador instances can access
