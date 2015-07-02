@@ -99,37 +99,40 @@ def main(data, document_id, source, host):
 	canvases = []
 
 	for cvs in canvasInfo:
-		response = http.request('GET', cvs['baseuri'] + imageInfoSuffix)
-		huam_image = response.data
+		try: 
+			response = http.request('GET', cvs['baseuri'] + imageInfoSuffix)
+			huam_image = response.data
 
-		infojson = json.loads(huam_image.decode('utf-8'))
-		cvsjson = {
-			"@id": manifest_uri + "/canvas/canvas-%s.json" % cvs['image'],
-			"@type": "sc:Canvas",
-			"label": cvs['label'],
-			"height": infojson['height'],
-			"width": infojson['width'],
-			"images": [
-				{
-					"@id":manifest_uri+"/annotation/anno-%s.json" % cvs['image'],
-					"@type": "oa:Annotation",
-					"motivation": "sc:painting",
-					"resource": {
-						"@id": imageUriBase + cvs['image'] + imageUriSuffix,
-						"@type": "dcterms:Image",
-						"format":"image/jpeg",
-						"height": infojson['height'],
-						"width": infojson['width'],
-						"service": { 
-						  "@id": imageUriBase + cvs['image'],
-						  "profile": profileLevel
+			infojson = json.loads(huam_image.decode('utf-8'))
+			cvsjson = {
+				"@id": manifest_uri + "/canvas/canvas-%s.json" % cvs['image'],
+				"@type": "sc:Canvas",
+				"label": cvs['label'],
+				"height": infojson['height'],
+				"width": infojson['width'],
+				"images": [
+					{
+						"@id":manifest_uri+"/annotation/anno-%s.json" % cvs['image'],
+						"@type": "oa:Annotation",
+						"motivation": "sc:painting",
+						"resource": {
+							"@id": imageUriBase + cvs['image'] + imageUriSuffix,
+							"@type": "dcterms:Image",
+							"format":"image/jpeg",
+							"height": infojson['height'],
+							"width": infojson['width'],
+							"service": { 
+							  "@id": imageUriBase + cvs['image'],
+							  "profile": profileLevel
+							},
 						},
-					},
-					"on": manifest_uri + "/canvas/canvas-%s.json" % cvs['image']
-				}
-			]
-		}
-		canvases.append(cvsjson)
+						"on": manifest_uri + "/canvas/canvas-%s.json" % cvs['image']
+					}
+				]
+			}
+			canvases.append(cvsjson)
+		except Exception:
+			print("Bad IDS URL: " + cvs['baseuri'])
 
 	mfjson['sequences'][0]['canvases'] = canvases
 	output = json.dumps(mfjson, indent=4, sort_keys=True)
