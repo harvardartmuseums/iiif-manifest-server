@@ -8,7 +8,7 @@ import urllib3
 # Create your views here.
 
 HUAM_API_URL = "http://api.harvardartmuseums.org/object/"
-HUAM_API_KEY = "7a519500-933a-11e3-b8ce-c9be9b362aa7"
+HUAM_API_KEY = getattr(settings, 'API_KEY', '')
 
 
 # Returns a IIIF manifest of a METS, MODS or HUAM JSON object
