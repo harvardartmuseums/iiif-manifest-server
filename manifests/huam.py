@@ -102,6 +102,12 @@ def main(data, document_id, source, host):
 			"value":huam_json["provenance"]
 		})
 
+	if huam_json["copyright"]:
+		metadata.append({
+			"label":"Copyright",
+			"value":huam_json["copyright"]
+		})		
+
 	mfjson["metadata"] = metadata
 
 
