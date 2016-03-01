@@ -117,7 +117,7 @@ def main(data, document_id, source, host):
 						"motivation": "sc:painting",
 						"resource": {
 							"@id": imageUriBase + cvs['image'] + imageUriSuffix,
-							"@type": "dcterms:Image",
+							"@type": "dctypes:Image",
 							"format":"image/jpeg",
 							"height": infojson['height'],
 							"width": infojson['width'],
