@@ -57,7 +57,7 @@ def main(data, document_id, source, host):
 		info['baseuri'] = im["iiifbaseuri"]
 		canvasInfo.append(info)
 
-	# can add metadata key/value pairs
+	# start building the manifest
 	mfjson = {
 		"@context":"http://www.shared-canvas.org/ns/context.json",
 		"@id": manifest_uri,
@@ -66,28 +66,6 @@ def main(data, document_id, source, host):
 		"attribution":attribution,
 		"logo":logo,
 		"description":huam_json["description"],
-		"metadata": [
-			{
-				"label":"Date",
-				"value":huam_json["dated"]
-			},
-			{
-				"label":"Classification",
-				"value":huam_json["classification"]
-			},
-			{
-				"label":"Credit Line",
-				"value":huam_json["creditline"]
-			},
-			{
-				"label":"Provenance", 
-				"value":huam_json["provenance"]
-			},
-			{
-				"label":"Object Number", 
-				"value":huam_json["objectnumber"]
-			}
-		],
 		"within": "http://www.harvardartmuseums.org/collections",
 		"sequences": [
 			{
@@ -97,6 +75,35 @@ def main(data, document_id, source, host):
 			}
 		]
 	}
+
+	# can add metadata key/value pairs
+	metadata = [
+		{
+			"label":"Date",
+			"value":huam_json["dated"]
+		},
+		{
+			"label":"Classification",
+			"value":huam_json["classification"]
+		},
+		{
+			"label":"Credit Line",
+			"value":huam_json["creditline"]
+		},
+		{
+			"label":"Object Number", 
+			"value":huam_json["objectnumber"]
+		}
+	]
+
+	if huam_json["provenance"]:
+		metadata.append({
+			"label":"Provenance",
+			"value":huam_json["provenance"]
+		})
+
+	mfjson["metadata"] = metadata
+
 
 	canvases = []
 
