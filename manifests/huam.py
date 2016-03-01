@@ -12,6 +12,7 @@ manifestUriBase = ""
 serviceBase = imageUriBase
 profileLevel = "http://library.stanford.edu/iiif/image-api/1.1/conformance.html#level1"
 attributionBase = "Harvard Art Museums"
+logo = "http://www.harvardartmuseums.org/assets/images/logo.png"
 
 http = urllib3.PoolManager()
 
@@ -63,6 +64,7 @@ def main(data, document_id, source, host):
 		"@type":"sc:Manifest",
 		"label":manifestLabel,
 		"attribution":attribution,
+		"logo":logo,
 		"description":huam_json["description"],
 		"metadata": [
 			{
