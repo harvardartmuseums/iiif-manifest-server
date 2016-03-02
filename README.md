@@ -16,3 +16,24 @@ ELASTICSEARCH_URL = localhost:9200
 ELASTICSEARCH_INDEX = manifests
 API_KEY = 000000-00000-00000-000000-000000
 ```
+
+### Create a virtual environment
+```
+cd YOUR_PROJECT_FOLDER
+virtualenv venv
+```
+
+### Activate the virtual environment
+```
+venv\Scripts\activate.bat
+```
+
+### Install dependencies  
+```
+pip install -r requirements.txt
+```
+
+### Start the server
+```
+py manage.py runserver 0.0.0.0:5000
+```
