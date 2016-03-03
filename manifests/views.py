@@ -8,7 +8,7 @@ import urllib3
 
 # Create your views here.
 
-HUAM_API_URL = "http://api.harvardartmuseums.org/object/"
+HUAM_API_URL = "http://api.harvardartmuseums.org/"
 HUAM_API_KEY = getattr(settings, 'API_KEY', '')
 
 
@@ -73,7 +73,7 @@ def refresh_by_source(request, document_type):
 ## HELPER FUNCTIONS ##
 # Gets HUAM JSON from HUAM API
 def get_huam(document_id, source):
-    huam_url = HUAM_API_URL+document_id+"?apikey="+HUAM_API_KEY
+    huam_url = HUAM_API_URL + "%s/%s?apikey=%s" % (source, document_id, HUAM_API_KEY)
 
     http = urllib3.PoolManager()
     response = http.request('GET', huam_url)

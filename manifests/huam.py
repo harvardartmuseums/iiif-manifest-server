@@ -48,11 +48,18 @@ def main(data, document_id, source, host):
 	canvasInfo = []
 	for (counter, im) in enumerate(images):
 		info = {}
-		if im["publiccaption"]:
-			info['label'] = im["publiccaption"]
-		else:
-			info['label'] = str(counter+1)
-			
+
+		if source == "object":
+			if im["publiccaption"]:
+				info['label'] = im["publiccaption"]
+			else:
+				info['label'] = str(counter+1)
+		elif source == "exhibition":
+			if im["caption"]:
+				info['label'] = im["caption"]
+			else:
+				info['label'] = str(counter+1)
+
 		info['image'] = im["idsid"]
 		info['baseuri'] = im["iiifbaseuri"]
 		canvasInfo.append(info)
@@ -77,36 +84,48 @@ def main(data, document_id, source, host):
 	}
 
 	# can add metadata key/value pairs
-	metadata = [
-		{
-			"label":"Date",
-			"value":huam_json["dated"]
-		},
-		{
-			"label":"Classification",
-			"value":huam_json["classification"]
-		},
-		{
-			"label":"Credit Line",
-			"value":huam_json["creditline"]
-		},
-		{
-			"label":"Object Number", 
-			"value":huam_json["objectnumber"]
-		}
-	]
+	if source == "object":
+		metadata = [
+			{
+				"label":"Date",
+				"value":huam_json["dated"]
+			},
+			{
+				"label":"Classification",
+				"value":huam_json["classification"]
+			},
+			{
+				"label":"Credit Line",
+				"value":huam_json["creditline"]
+			},
+			{
+				"label":"Object Number", 
+				"value":huam_json["objectnumber"]
+			}
+		]
 
-	if huam_json["provenance"]:
-		metadata.append({
-			"label":"Provenance",
-			"value":huam_json["provenance"]
-		})
+		if huam_json["provenance"]:
+			metadata.append({
+				"label":"Provenance",
+				"value":huam_json["provenance"]
+			})
 
-	if huam_json["copyright"]:
-		metadata.append({
-			"label":"Copyright",
-			"value":huam_json["copyright"]
-		})		
+		if huam_json["copyright"]:
+			metadata.append({
+				"label":"Copyright",
+				"value":huam_json["copyright"]
+			})
+	elif source == "exhibition":
+		metadata = [
+			{
+				"label":"Begin Date",
+				"value": huam_json["begindate"]
+			},
+			{
+				"label":"End Date",
+				"value": huam_json["enddate"]
+			},
+		]
 
 	mfjson["metadata"] = metadata
 
