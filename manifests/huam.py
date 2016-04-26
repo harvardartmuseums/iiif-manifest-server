@@ -121,6 +121,10 @@ def main(data, document_id, source, host):
 	elif source == "exhibition":
 		metadata = [
 			{
+				"label":"Title",
+				"value": huam_json["title"]
+			},
+			{
 				"label":"Begin Date",
 				"value": huam_json["begindate"]
 			},
