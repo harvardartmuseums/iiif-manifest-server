@@ -83,6 +83,9 @@ def main(data, document_id, source, host):
 		]
 	}
 
+	if huam_json["url"]:
+		mfjson["seeAlso"] = huam_json["url"]
+
 	# can add metadata key/value pairs
 	if source == "object":
 		metadata = [
