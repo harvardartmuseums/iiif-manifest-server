@@ -84,6 +84,28 @@ def get_huam(document_id, source):
 
     return (True, huam.decode('utf8'))
 
+def get_huam_gallery(document_id, source):
+    huam_url = HUAM_API_URL + "%s/%s?apikey=%s" % (source, document_id, HUAM_API_KEY)
+
+    http = urllib3.PoolManager()
+    response = http.request('GET', huam_url)
+    huam = response.data
+
+    # Get the objects in the gallery
+    huam_url = HUAM_API_URL + "object?apikey=%s&size=100&hasimage=1&fields=objectid,objectnumber,title,images&gallery=%s" % (HUAM_API_KEY, document_id)
+    response = http.request('GET', huam_url)
+    objects = response.data
+    o = json.loads(objects.decode('utf8'))
+
+    # Append the objects to the gallery
+    j = json.loads(huam.decode('utf8'))
+    j["objects"] = o["records"]
+
+    if (huam.decode('utf8')==''):
+        return (False, HttpResponse("The document ID %s does not exist" % document_id, status=404))
+
+    return (True, json.dumps(j))
+
 # Adds headers to Response for returning JSON that other Mirador instances can access
 def add_headers(response):
     response["Access-Control-Allow-Origin"] = "*"
@@ -98,7 +120,10 @@ def get_manifest(document_id, source, force_refresh, host):
     ## TODO: add last modified check
 
     if not has_manifest or force_refresh:
-        (success, response) = get_huam(document_id, source)
+        if source == "object":
+            (success, response) = get_huam(document_id, source)
+        elif source == "gallery":
+            (success, response) = get_huam_gallery(document_id, source)
 
         if not success:
             return (success, response, document_id, source) # This is actually the 404 HttpResponse, so return and end the function

@@ -25,7 +25,12 @@ def main(data, document_id, source, host):
 	huam_json = json.loads(data)
 	attribution = attributionBase
 
-	manifestLabel = huam_json["title"]
+	if source == "gallery":
+		manifestLabel = "%s, Gallery %s, Level %s" % (huam_json["name"], huam_json["gallerynumber"], huam_json["floor"])
+		huam_json["description"] = ""
+	else:
+		manifestLabel = huam_json["title"]
+	
 	#genres = dom.xpath('/mods:mods/mods:genre/text()', namespaces=ALLNS)
 	#TODO: determine if there are different viewingHints for HUAM data
 	genres = []
@@ -41,9 +46,12 @@ def main(data, document_id, source, host):
 
 	## List of different image labels
 	## @displayLabel = Full Image, @note = Color digital image available, @note = Harvard Map Collection copy image
-	images = huam_json["images"]
+	if source in ["object", "exhibition"]:
+		images = huam_json["images"]
+	elif source == "gallery":
+		images = huam_json["objects"]
 
-	#print "Images list", images
+	# print("Images list", images)
 
 	canvasInfo = []
 	for (counter, im) in enumerate(images):
@@ -59,9 +67,19 @@ def main(data, document_id, source, host):
 				info['label'] = im["caption"]
 			else:
 				info['label'] = str(counter+1)
+		elif source == "gallery":
+			if im["title"]:
+				info['label'] = "%s, %s" % (im["title"], im["objectnumber"])
+			else:
+				info['label'] = str(counter+1)
 
-		info['image'] = im["idsid"]
-		info['baseuri'] = im["iiifbaseuri"]
+		if source in ["object", "exhibition"]:
+			info['image'] = im["idsid"]
+			info['baseuri'] = im["iiifbaseuri"]
+		elif source == "gallery":
+			info['image'] = im["images"][0]["idsid"]
+			info['baseuri'] = im["images"][0]["iiifbaseuri"]
+
 		canvasInfo.append(info)
 
 	# start building the manifest
@@ -83,8 +101,11 @@ def main(data, document_id, source, host):
 		]
 	}
 
-	if huam_json["url"]:
-		mfjson["seeAlso"] = huam_json["url"]
+	if source in ["object", "exhibition"]:
+		if huam_json["url"]:
+			mfjson["seeAlso"] = huam_json["url"]
+	elif source == "gallery":
+		mfjson["seeAlso"] = "http://www.harvardartmuseums.org/visit/floor-plan/%s/%s" % (huam_json["floor"], huam_json["gallerynumber"])
 
 	# can add metadata key/value pairs
 	if source == "object":
@@ -113,6 +134,7 @@ def main(data, document_id, source, host):
 				"value":huam_json["provenance"]
 			})
 
+
 		if huam_json["copyright"]:
 			metadata.append({
 				"label":"Copyright",
@@ -133,6 +155,27 @@ def main(data, document_id, source, host):
 				"value": huam_json["enddate"]
 			},
 		]
+	elif source == "gallery":
+		metadata = [
+			{
+				"label":"Gallery Number",
+				"value": huam_json["gallerynumber"]
+			},
+			{
+				"label":"Name",
+				"value": huam_json["name"]
+			},
+			{
+				"label":"Theme",
+				"value": huam_json["theme"]
+			},
+		]		
+
+		if huam_json["labeltext"]:
+			metadata.append({
+				"label":"Description",
+				"value":huam_json["labeltext"]
+			})
 
 	mfjson["metadata"] = metadata
 
