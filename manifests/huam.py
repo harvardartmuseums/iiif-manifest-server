@@ -164,12 +164,14 @@ def main(data, document_id, source, host):
 			{
 				"label":"Name",
 				"value": huam_json["name"]
-			},
-			{
-				"label":"Theme",
-				"value": huam_json["theme"]
-			},
+			}
 		]		
+
+		if huam_json["theme"]:
+			metadata.append({
+				"label":"Theme",
+				"value":huam_json["theme"]
+			})
 
 		if huam_json["labeltext"]:
 			metadata.append({
