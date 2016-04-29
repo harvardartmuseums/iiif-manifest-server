@@ -27,9 +27,10 @@ def main(data, document_id, source, host):
 
 	if source == "gallery":
 		manifestLabel = "%s, Gallery %s, Level %s" % (huam_json["name"], huam_json["gallerynumber"], huam_json["floor"])
-		huam_json["description"] = ""
+		manifestDescription = huam_json["theme"]
 	else:
 		manifestLabel = huam_json["title"]
+		manifestDescription = huam_json["description"] if huam_json["description"] else ""
 	
 	#genres = dom.xpath('/mods:mods/mods:genre/text()', namespaces=ALLNS)
 	#TODO: determine if there are different viewingHints for HUAM data
@@ -90,7 +91,7 @@ def main(data, document_id, source, host):
 		"label":manifestLabel,
 		"attribution":attribution,
 		"logo":logo,
-		"description":huam_json["description"],
+		"description":manifestDescription,
 		"within": "http://www.harvardartmuseums.org/collections",
 		"sequences": [
 			{
