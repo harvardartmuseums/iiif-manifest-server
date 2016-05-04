@@ -27,7 +27,7 @@ def main(data, document_id, source, host):
 
 	if source == "gallery":
 		manifestLabel = "%s, Gallery %s, Level %s" % (huam_json["name"], huam_json["gallerynumber"], huam_json["floor"])
-		manifestDescription = huam_json["theme"]
+		manifestDescription = huam_json["theme"] if huam_json["theme"] else ""
 	else:
 		manifestLabel = huam_json["title"]
 		manifestDescription = huam_json["description"] if huam_json["description"] else ""
