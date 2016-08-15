@@ -54,6 +54,13 @@ def main(data, document_id, source, host):
 
 	# print("Images list", images)
 
+	# Determine the primary rendering url
+	if source in ["object", "exhibition"]:
+		if huam_json["url"]:
+			rendering_url = huam_json["url"]
+	elif source == "gallery":
+		rendering_url = "http://www.harvardartmuseums.org/visit/floor-plan/%s/%s" % (huam_json["floor"], huam_json["gallerynumber"])
+
 	canvasInfo = []
 	for (counter, im) in enumerate(images):
 		info = {}
@@ -85,7 +92,7 @@ def main(data, document_id, source, host):
 
 	# start building the manifest
 	mfjson = {
-		"@context":"http://www.shared-canvas.org/ns/context.json",
+		"@context":"http://iiif.io/api/presentation/2/context.json",
 		"@id": manifest_uri,
 		"@type":"sc:Manifest",
 		"label":manifestLabel,
@@ -95,18 +102,17 @@ def main(data, document_id, source, host):
 		"within": "http://www.harvardartmuseums.org/collections",
 		"sequences": [
 			{
-				"@id": manifest_uri + "/sequence/normal.json",
+				"@id": manifest_uri + "/sequence/normal",
 				"@type": "sc:Sequence",
 				"viewingHint":viewingHint,
 			}
-		]
+		],
+		"rendering": {
+			"@id": rendering_url,
+			"label": "Full record view",
+			"format": "text/html"			
+		}
 	}
-
-	if source in ["object", "exhibition"]:
-		if huam_json["url"]:
-			mfjson["seeAlso"] = huam_json["url"]
-	elif source == "gallery":
-		mfjson["seeAlso"] = "http://www.harvardartmuseums.org/visit/floor-plan/%s/%s" % (huam_json["floor"], huam_json["gallerynumber"])
 
 	# can add metadata key/value pairs
 	if source == "object":
@@ -192,14 +198,14 @@ def main(data, document_id, source, host):
 
 			infojson = json.loads(huam_image.decode('utf-8'))
 			cvsjson = {
-				"@id": manifest_uri + "/canvas/canvas-%s.json" % cvs['image'],
+				"@id": manifest_uri + "/canvas/canvas-%s" % cvs['image'],
 				"@type": "sc:Canvas",
 				"label": cvs['label'],
 				"height": infojson['height'],
 				"width": infojson['width'],
 				"images": [
 					{
-						"@id":manifest_uri+"/annotation/anno-%s.json" % cvs['image'],
+						"@id":manifest_uri+"/annotation/anno-%s" % cvs['image'],
 						"@type": "oa:Annotation",
 						"motivation": "sc:painting",
 						"resource": {
@@ -213,7 +219,7 @@ def main(data, document_id, source, host):
 							  "profile": profileLevel
 							},
 						},
-						"on": manifest_uri + "/canvas/canvas-%s.json" % cvs['image']
+						"on": manifest_uri + "/canvas/canvas-%s" % cvs['image']
 					}
 				]
 			}
