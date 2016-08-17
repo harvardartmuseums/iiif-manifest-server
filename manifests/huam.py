@@ -11,6 +11,7 @@ imageInfoSuffix = "/info.json"
 manifestUriBase = ""
 serviceBase = imageUriBase
 profileLevel = "http://library.stanford.edu/iiif/image-api/1.1/conformance.html#level1"
+imageServiceContext = "http://iiif.io/api/image/1/context.json"
 attributionBase = "Harvard Art Museums"
 logo = "http://www.harvardartmuseums.org/assets/images/logo.png"
 
@@ -215,6 +216,7 @@ def main(data, document_id, source, host):
 							"height": infojson['height'],
 							"width": infojson['width'],
 							"service": { 
+							  "@context": imageServiceContext,
 							  "@id": imageUriBase + cvs['image'],
 							  "profile": profileLevel
 							},
