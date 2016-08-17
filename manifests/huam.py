@@ -136,6 +136,24 @@ def main(data, document_id, source, host):
 			}
 		]
 
+		if huam_json["medium"]:
+			metadata.append({
+				"label":"Medium",
+				"value":huam_json["medium"]
+			})
+
+		if huam_json["technique"]:
+			metadata.append({
+				"label":"Technique",
+				"value":huam_json["technique"]
+			})
+
+		if huam_json["dimensions"]:
+			metadata.append({
+				"label":"Dimensions",
+				"value":huam_json["dimensions"]
+			})
+
 		if huam_json["provenance"]:
 			metadata.append({
 				"label":"Provenance",
