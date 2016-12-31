@@ -56,12 +56,11 @@ def main(data, document_id, source, host):
 	# print("Images list", images)
 
 	# Determine the primary rendering url
-	if source in ["object", "exhibition"]:
+	rendering_url = ""
+	if source in ["object", "exhibition", "gallery"]:
 		if huam_json["url"]:
 			rendering_url = huam_json["url"]
-	elif source == "gallery":
-		rendering_url = "http://www.harvardartmuseums.org/visit/floor-plan/%s/%s" % (huam_json["floor"], huam_json["gallerynumber"])
-
+	
 	canvasInfo = []
 	for (counter, im) in enumerate(images):
 		info = {}
