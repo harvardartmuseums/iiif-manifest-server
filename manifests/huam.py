@@ -21,7 +21,7 @@ def main(data, document_id, source, host):
 	global imageHash 
 	imageHash = {}
 	global manifestUriBase
-	manifestUriBase = "http://%s/manifests/" % host
+	manifestUriBase = "https://%s/manifests/" % host
 
 	huam_json = json.loads(data)
 	attribution = attributionBase
