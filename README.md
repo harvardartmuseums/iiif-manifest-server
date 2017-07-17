@@ -15,6 +15,7 @@ This application requires the following environment variables.
 ELASTICSEARCH_URL = localhost:9200
 ELASTICSEARCH_INDEX = manifests
 API_KEY = 000000-00000-00000-000000-000000
+PYTHON_DJANGO_SECRET_KEY = SOME_LONG_SET_OF_RANDOM_CHARACTERS
 ```
 
 ### Create a virtual environment
