@@ -1,0 +1,76 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="stylesheet" type="text/css" href="{% static 'viewers/mirador/css/mirador-combined.css' %}">
+    <title>Harvard Art Museums | Mirador Viewer</title>
+    <style type="text/css">
+     #viewer {
+       width: 100%;
+       height: 100%;
+       position: fixed;
+     }
+    </style>
+  </head>
+  <body>
+    <div id="viewer"></div>
+
+    <script src="{% static 'viewers/mirador/mirador.min.js' %}"></script>
+    <script type="text/javascript">
+
+     $(function() {
+		var manifestParam = getUrlVar("manifest");
+		var showMainMenu = true;
+
+		if (getUrlVar("showmainmenu") === "0") {
+			showMainMenu = false;
+		}
+
+        var manifestList = [];
+        var windowObjects = [];
+
+		if (manifestParam) {
+			manifestList.push({
+				manifestUri: manifestParam,
+				location: "Unknown"
+			});
+			windowObjects = [{loadedManifest: manifestParam}];
+		}
+
+
+		myMiradorInstance = Mirador({
+         id: "viewer",
+         layout: "1x1",
+         buildPath: "{% static 'viewers/mirador/' %}",
+         data: manifestList,
+         windowObjects: windowObjects,
+         annotationEndpoint: {
+           name:"Local Storage",
+           module: "LocalStorageEndpoint"
+         },
+         mainMenuSettings: {
+			show: showMainMenu
+         },
+         "windowSettings": {
+           "canvasControls": { // The types of controls available to be displayed on a canvas
+             "imageManipulation" : {
+               "manipulationLayer" : true,
+               "controls" : {
+                 "mirror" : true
+               }
+             }
+           }
+         }
+		});
+     });
+
+    function getUrlVar(key) {
+		var result = new RegExp(key + "=([^&]*)", "i").exec(window.location.search);
+		return result && unescape(result[1]) || "";
+    }
+    </script>
+  </body>
+</html>
