@@ -121,5 +121,7 @@ API_KEY = os.environ.get('APIKEY')
 # CORS
 CORS_ORIGIN_ALLOW_ALL = True
 
-SECURE_SSL_REDIRECT = True 
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+if os.environ.get('PYTHON_ENV') != "development":
+    SECURE_SSL_REDIRECT = True 
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
