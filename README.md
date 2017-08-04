@@ -1,6 +1,8 @@
 # IIIF Manifest Server
 
-This is a server for creating and delivering IIIF manifests. It sits on top of the Harvard Art Museums API.  
+This is a server for creating and delivering IIIF manifests that conform to the specification for Presentation API v2. It sits on top of the Harvard Art Museums API.  
+
+The server is configured to run over HTTPS in staging and production environments.  
 
 ## Requirements
 
@@ -16,6 +18,7 @@ ELASTICSEARCH_URL = localhost:9200
 ELASTICSEARCH_INDEX = manifests
 API_KEY = 000000-00000-00000-000000-000000
 PYTHON_DJANGO_SECRET_KEY = SOME_LONG_SET_OF_RANDOM_CHARACTERS
+DJANGO_DEBUG = False
 ```
 
 ### Create a virtual environment
