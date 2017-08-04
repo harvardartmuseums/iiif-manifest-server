@@ -116,7 +116,8 @@ if os.environ.get('PYTHON_ENV') == "staging":
 if os.environ.get('PYTHON_ENV') == "development":
     ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL_DEV')
 
-API_KEY = os.environ.get('APIKEY')
+HAM_API_KEY = os.environ.get('HAM_API_KEY')
+HAM_API_URL = os.environ.get('HAM_API_URL')
 
 # CORS
 CORS_ORIGIN_ALLOW_ALL = True

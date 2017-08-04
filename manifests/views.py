@@ -5,11 +5,12 @@ from manifests import huam
 from manifests import models
 import json
 import urllib3
+import certifi
 
 # Create your views here.
 
-HUAM_API_URL = "http://api.harvardartmuseums.org/"
-HUAM_API_KEY = getattr(settings, 'API_KEY', '')
+HUAM_API_URL = getattr(settings, 'HAM_API_URL', '')
+HUAM_API_KEY = getattr(settings, 'HAM_API_KEY', '')
 
 
 # Returns a IIIF manifest of a METS, MODS or HUAM JSON object
@@ -75,7 +76,7 @@ def refresh_by_source(request, document_type):
 def get_huam(document_id, source):
     huam_url = HUAM_API_URL + "%s/%s?apikey=%s" % (source, document_id, HUAM_API_KEY)
 
-    http = urllib3.PoolManager()
+    http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
     response = http.request('GET', huam_url)
     huam = response.data
 
@@ -87,7 +88,7 @@ def get_huam(document_id, source):
 def get_huam_gallery(document_id, source):
     huam_url = HUAM_API_URL + "%s/%s?apikey=%s" % (source, document_id, HUAM_API_KEY)
 
-    http = urllib3.PoolManager()
+    http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
     response = http.request('GET', huam_url)
     huam = response.data
 

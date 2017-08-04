@@ -2,6 +2,7 @@
 
 import json, sys
 import urllib3
+import certifi
 
 imageHash = {}
 
@@ -15,7 +16,7 @@ imageServiceContext = "http://iiif.io/api/image/1/context.json"
 attributionBase = "Harvard Art Museums"
 logo = "http://www.harvardartmuseums.org/assets/images/logo.png"
 
-http = urllib3.PoolManager()
+http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
 
 def main(data, document_id, source, host):
 	global imageHash 

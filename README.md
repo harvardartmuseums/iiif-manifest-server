@@ -16,7 +16,8 @@ This application requires the following environment variables.
 ```
 ELASTICSEARCH_URL = localhost:9200
 ELASTICSEARCH_INDEX = manifests
-API_KEY = 000000-00000-00000-000000-000000
+HAM_API_KEY = 000000-00000-00000-000000-000000
+HAM_API_URL = http://api.harvardartmuseums.org
 PYTHON_DJANGO_SECRET_KEY = SOME_LONG_SET_OF_RANDOM_CHARACTERS
 DJANGO_DEBUG = False
 ```
