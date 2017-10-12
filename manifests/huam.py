@@ -14,7 +14,7 @@ serviceBase = imageUriBase
 profileLevel = "http://library.stanford.edu/iiif/image-api/1.1/conformance.html#level1"
 imageServiceContext = "http://iiif.io/api/image/1/context.json"
 attributionBase = "Harvard Art Museums"
-logo = "http://www.harvardartmuseums.org/assets/images/logo.png"
+logo = "https://www.harvardartmuseums.org/assets/images/logo.png"
 
 http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
 
@@ -99,7 +99,7 @@ def main(data, document_id, source, host):
 		"attribution":attribution,
 		"logo":logo,
 		"description":manifestDescription,
-		"within": "http://www.harvardartmuseums.org/collections",
+		"within": "https://www.harvardartmuseums.org/collections",
 		"sequences": [
 			{
 				"@id": manifest_uri + "/sequence/normal",
