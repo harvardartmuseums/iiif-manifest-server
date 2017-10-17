@@ -302,6 +302,42 @@ def collection(data, source, host, protocol, page):
 	output = json.dumps(mfjson, indent=4, sort_keys=True)
 	return output
 
+def top(host, protocol):
+	global collectionUriBase
+	collectionUriBase = "%s://%s/collections/" % (protocol, host)
+	collection_uri = collectionUriBase + "top"
+	
+	# start building the collection
+	mfjson = {		
+		"@context":"http://iiif.io/api/presentation/2/context.json",
+		"@id": collectionUriBase,
+		"@type": "sc:Collection",
+		"label": "Harvard Art Museums Collections"
+	}
+
+	collections = []
+	collection = {
+		"@id": collectionUriBase + "object",
+		"@type": "sc:Collection",
+		"label": "Objects"
+	}
+	collections.append(collection)
+	mfjson["collections"] = collections
+
+	# add viewingHint = individuals for each collection
+	members = []
+	member = {
+		"@id": collectionUriBase + "object",
+		"@type": "sc:Collection",
+		"label": "Objects",
+		"viewingHint": "individuals"
+	}
+	members.append(member)
+	mfjson["members"] = members
+
+	output = json.dumps(mfjson, indent=4, sort_keys=True)
+	return output
+
 if __name__ == "__main__":
 	if (len(sys.argv) < 5):
 		sys.stderr.write('not enough args\n')

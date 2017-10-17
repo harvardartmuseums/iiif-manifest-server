@@ -13,6 +13,15 @@ HUAM_API_URL = getattr(settings, 'HAM_API_URL', '')
 HUAM_API_KEY = getattr(settings, 'HAM_API_KEY', '')
 
 
+def top(request):
+    host = request.META['HTTP_HOST']
+    protocol = "https" if request.is_secure() else "http"
+
+    response_doc = get_top(host, protocol)
+    response = HttpResponse(response_doc)
+    add_headers(response)
+    return response
+
 # Returns a IIIF collection of HAM manifests
 def collection(request, document_type):
     host = request.META['HTTP_HOST']
@@ -117,3 +126,7 @@ def get_collection(source, page, force_refresh, host, protocol):
     converted_json = huam.collection(response, source, host, protocol, page)
 
     return (success, converted_json, page, source)
+
+def get_top(host, protocol):
+    converted_json = huam.top(host, protocol)
+    return (converted_json)
