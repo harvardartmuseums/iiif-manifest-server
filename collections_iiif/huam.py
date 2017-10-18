@@ -282,6 +282,7 @@ def collection(data, source, host, protocol, page):
 	if page == 0:
 		mfjson["total"] = huam_json["info"]["totalrecords"]
 		mfjson["first"] = "%s?page=%s" % (collection_uri, 1)
+		mfjson["within"] = collectionUriBase + "top"
 	elif page == 1:
 		mfjson["startIndex"] = 0
 		mfjson["next"] = "%s?page=%s" % (collection_uri, 2) 
