@@ -135,6 +135,22 @@ def main(data, document_id, source, host):
 			}
 		]
 
+		if "people" in huam_json:
+			people = []
+			for person in huam_json["people"]:
+				p = "%s: %s" % (person["role"], person["displayname"])
+				if person["culture"]:
+					p = p + ", " + person["culture"]
+				if person["displaydate"]:
+					p = p + ", " + person["displaydate"]
+
+				people.append(p)
+
+			metadata.append({
+				"label":"People",
+				"value":people
+			})
+
 		if huam_json["medium"]:
 			metadata.append({
 				"label":"Medium",
