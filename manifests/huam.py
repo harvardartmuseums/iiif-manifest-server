@@ -13,6 +13,7 @@ manifestUriBase = ""
 serviceBase = imageUriBase
 profileLevel = "http://library.stanford.edu/iiif/image-api/1.1/conformance.html#level1"
 imageServiceContext = "http://iiif.io/api/image/1/context.json"
+presentationServiceContext = "http://iiif.io/api/presentation/2/context.json"
 attributionBase = "Harvard Art Museums"
 logo = "https://www.harvardartmuseums.org/assets/images/logo.png"
 
@@ -92,7 +93,7 @@ def main(data, document_id, source, host):
 
 	# start building the manifest
 	mfjson = {
-		"@context":"http://iiif.io/api/presentation/2/context.json",
+		"@context":presentationServiceContext,
 		"@id": manifest_uri,
 		"@type":"sc:Manifest",
 		"label":manifestLabel,
