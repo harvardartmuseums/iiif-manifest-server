@@ -244,14 +244,14 @@ def main(data, document_id, source, host):
 						"@type": "oa:Annotation",
 						"motivation": "sc:painting",
 						"resource": {
-							"@id": imageUriBase + cvs['image'] + imageUriSuffix,
+							"@id": imageUriBase + str(cvs['image']) + imageUriSuffix,
 							"@type": "dctypes:Image",
 							"format":"image/jpeg",
 							"height": infojson['height'],
 							"width": infojson['width'],
 							"service": { 
 							  "@context": imageServiceContext,
-							  "@id": imageUriBase + cvs['image'],
+							  "@id": imageUriBase + str(cvs['image']),
 							  "profile": profileLevel
 							},
 						},
