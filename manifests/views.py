@@ -12,6 +12,20 @@ import certifi
 HUAM_API_URL = getattr(settings, 'HAM_API_URL', '')
 HUAM_API_KEY = getattr(settings, 'HAM_API_KEY', '')
 
+def list(request, document_type, document_id, canvas_id):
+    # parts = document_id.split(":")
+    host = request.META['HTTP_HOST']
+    protocol = "https" if request.is_secure() else "http"
+    source = document_type
+    id = document_id
+    canvas = canvas_id
+    (success, response_doc, real_id, real_source, real_canvas) = get_list(id, source, canvas, host, protocol)
+    if success:
+        response = HttpResponse(response_doc)
+        add_headers(response)
+        return response
+    else:
+        return response_doc # 404 HttpResponse
 
 # Returns a IIIF manifest of a METS, MODS or HUAM JSON object
 # Checks if DB has it, otherwise creates it
@@ -107,6 +121,18 @@ def get_huam_gallery(document_id, source):
 
     return (True, json.dumps(j))
 
+def get_huam_annotations(document_id, canvas_id, source):
+    huam_url = HUAM_API_URL + "annotation/%s?apikey=%s&size=100&q=idsid:%s" % (document_id, HUAM_API_KEY, canvas_id)
+
+    http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
+    response = http.request('GET', huam_url)
+    huam = response.data
+
+    if (huam.decode('utf8')==''):
+        return (False, HttpResponse("The document ID %s does not exist" % document_id, status=404))
+
+    return (True, huam.decode('utf8'))
+
 # Adds headers to Response for returning JSON that other Mirador instances can access
 def add_headers(response):
     response["Access-Control-Allow-Origin"] = "*"
@@ -140,3 +166,13 @@ def get_manifest(document_id, source, force_refresh, host):
         # return JSON from db
         json_doc = models.get_manifest(document_id, source)
         return (True, json.dumps(json_doc), document_id, source)
+
+def get_list(document_id, source, canvas_id, host, protocol):
+    # get list of annotations from the database
+    (success, response) = get_huam_annotations(document_id, canvas_id, source)
+
+    # convert the annotations to the proper format
+    converted_json = huam.list(response, document_id, canvas_id, source, host, protocol)
+
+    # return JSON list
+    return (True, converted_json, document_id, source, canvas_id)

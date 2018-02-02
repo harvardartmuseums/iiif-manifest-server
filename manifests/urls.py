@@ -4,6 +4,8 @@ from manifests import views
 
 urlpatterns = patterns('',
     url(r'^(?P<document_type>(object|exhibition|gallery))/(?P<document_id>[A-Za-z\d]+)$', views.manifest, name='manifest'),
+    
+    url(r'^(?P<document_type>(object|exhibition|gallery))/(?P<document_id>[A-Za-z\d]+)/list/(?P<canvas_id>[A-Za-z\d]+)$', views.list, name='list'),
 
     url(r'^delete/(?P<document_type>(object|exhibition|gallery))/(?P<document_id>[A-Za-z\d]+)$', views.delete, name='delete'),
 

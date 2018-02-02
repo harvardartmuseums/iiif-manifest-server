@@ -3,9 +3,14 @@
 import json, sys
 import urllib3
 import certifi
+from django.conf import settings
 
 imageHash = {}
 
+
+HAM_API_URL = getattr(settings, 'HAM_API_URL', '')
+
+hamAnnotationUriBase = HAM_API_URL + "annotation/"
 imageUriBase = "https://ids.lib.harvard.edu/ids/iiif/"
 imageUriSuffix = "/full/full/0/native.jpg"
 imageInfoSuffix = "/info.json"
@@ -14,6 +19,7 @@ serviceBase = imageUriBase
 profileLevel = "http://library.stanford.edu/iiif/image-api/1.1/conformance.html#level1"
 imageServiceContext = "http://iiif.io/api/image/1/context.json"
 presentationServiceContext = "http://iiif.io/api/presentation/2/context.json"
+listServiceContext = "http://www.shared-canvas.org/ns/context.json"
 attributionBase = "Harvard Art Museums"
 logo = "https://www.harvardartmuseums.org/assets/images/logo.png"
 
@@ -231,9 +237,12 @@ def main(data, document_id, source, host):
 			response = http.request('GET', cvs['baseuri'] + imageInfoSuffix)
 			huam_image = response.data
 
+			canvas_uri = manifest_uri + "/canvas/canvas-%s" % cvs['image']
+			list_url = manifest_uri + "/list/%s" % cvs['image']
+
 			infojson = json.loads(huam_image.decode('utf-8'))
 			cvsjson = {
-				"@id": manifest_uri + "/canvas/canvas-%s" % cvs['image'],
+				"@id": canvas_uri,
 				"@type": "sc:Canvas",
 				"label": cvs['label'],
 				"height": infojson['height'],
@@ -255,9 +264,15 @@ def main(data, document_id, source, host):
 							  "profile": profileLevel
 							},
 						},
-						"on": manifest_uri + "/canvas/canvas-%s" % cvs['image']
+						"on": canvas_uri
 					}
-				]
+				],
+				"otherContent": [
+					{
+						"@id": list_url,
+						"@type": "sc:AnnotationList"
+					}
+				]	
 			}
 			canvases.append(cvsjson)
 		except Exception:
@@ -266,6 +281,66 @@ def main(data, document_id, source, host):
 	mfjson['sequences'][0]['canvases'] = canvases
 	output = json.dumps(mfjson, indent=4, sort_keys=True)
 	return output
+
+def list(data, document_id, canvas_id, source, host, protocol):
+	global manifestUriBase
+	manifestUriBase = "%s://%s/manifests/" % (protocol, host)
+	manifest_uri = manifestUriBase + "%s/%s" % (source, document_id)
+	canvas_uri = manifest_uri + "/canvas/canvas-%s" % (canvas_id)
+
+	listUriBase = manifest_uri + "/list/"
+	list_uri = listUriBase + "%s" % (canvas_id)
+
+	annotationUriBase = "%s://%s/annotations/" % (protocol, host)
+	annotation_uri = annotationUriBase + "%s"
+
+	huam_json = json.loads(data)
+
+	# prepare the members records
+	members = []
+
+	for record in huam_json["records"]:
+		member = {
+            "@id": annotation_uri % (record["id"]),
+            "@context": "http://iiif.io/api/presentation/2/context.json",
+            "@type": "oa:Annotation",
+            "motivation": [
+                "oa:commenting"
+            ],
+            "resource": [
+                {
+                    "@type": "dctypes:Text",
+                    "format": "text/html",
+                    "chars": record["body"]
+                }
+            ],
+            "on": {
+                "@type": "oa:SpecificResource",
+                "full": canvas_uri,
+                "selector": {
+                    "@type": "oa:FragmentSelector",
+                    "value": record["selectors"][0]["value"]
+                },
+                "within": {
+                    "@id": manifest_uri,
+                    "@type": "sc:Manifest"
+                }
+            }
+        }
+		members.append(member)
+
+	# start building the list
+	mfjson = {		
+		"@context": listServiceContext,
+		"@id": list_uri,
+		"@type":"sc:AnnotationList",
+        "resources": members		
+	}
+
+
+	output = json.dumps(mfjson, indent=4, sort_keys=True)
+	return output
+
 
 if __name__ == "__main__":
 	if (len(sys.argv) < 5):
