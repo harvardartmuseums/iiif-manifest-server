@@ -1942,6 +1942,25 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
   /*color: @gray-91;*/
   box-sizing: border-box;
 }
+.mirador-container input[type="submit"],
+.mirador-container input[type="text"] {
+  height: 25px;
+  border: 1px solid lightGray;
+  transition: border-color 0.3s ease-out;
+}
+.mirador-container input:focus {
+  outline: none;
+  border-color: deepskyblue;
+}
+.mirador-container input[type="submit"] {
+  color: gray;
+  background: #fff;
+}
+.mirador-container input[type="submit"]:hover {
+  outline: none;
+  border-color: deepskyblue;
+  color: #333;
+}
 .mirador-container {
   /* Full screen
   -------------------------------------------------------------------------- */
@@ -2000,6 +2019,7 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
   color: gray;
   text-align: center;
   font-weight: normal;
+  margin: 0px;
 }
 .mirador-container .slot:hover h1 {
   color: lightGray;
@@ -2007,12 +2027,12 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
 .mirador-container .plus {
   font-size: 170px;
   font-weight: bold;
-  margin-bottom: 20px;
+  margin-bottom: 2%;
 }
 .mirador-container .slotIconContainer {
-  position: absolute;
+  position: relative;
   top: 50%;
-  margin-top: -260px;
+  transform: translateY(-50%);
   width: 100%;
   overflow: hidden;
   pointer-events: none;
@@ -2153,11 +2173,12 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
   text-align: right;
 }
 .mirador-container .window {
-  position: relative;
+  position: absolute;
   width: 100%;
   height: 100%;
   overflow: hidden;
   background-color: #333;
+  top: 0%;
 }
 .mirador-container .manifest-info {
   overflow: auto;
@@ -2199,6 +2220,7 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
   overflow-y: scroll;
   height: 80%;
   word-wrap: break-word;
+  font-size: 90%;
 }
 .mirador-container .thumbnail-view,
 .mirador-container .image-view,
@@ -2234,6 +2256,9 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
   color: #b1b1b1;
   margin: 0px;
   height: 0px;
+}
+.mirador-container .v-direction-rtl {
+  direction: rtl;
 }
 .mirador-container {
   /* Disable outlines when canvas is focused
@@ -2755,6 +2780,9 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
 .mirador-container .hud-control .ui-slider-range {
   background: deepskyblue;
 }
+.mirador-container .thumbnail-rtl {
+  float: right !important;
+}
 @media screen and (max-width: 768px) {
   .mirador-container #load-controls form {
     float: none;
@@ -2973,14 +3001,6 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
   display: table;
   clear: both;
 }
-.mirador-container #load-controls input {
-  height: 25px;
-  border: 1px solid lightGray;
-  color: gray;
-  background: none;
-  border-radius: 2px;
-  transition: border-color 0.3s ease-out;
-}
 .mirador-container #manifest-search-form {
   float: left;
 }
@@ -3104,20 +3124,6 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
   opacity: 1;
   transition: all 0.2s ease-out;
   transform: translateX(0);
-  /*
-    h2 {
-      font-size: 1.5em;
-    }
-    h3 {
-      font-size: 1.25em;
-    }
-    h4 {
-      font-size: 1.0em;
-    }
-    h5 {
-      font-size: .75em;
-    }
-    */
 }
 .mirador-container .sidePanel .tabGroup {
   list-style-type: none;
@@ -3125,23 +3131,28 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
   padding: 0;
 }
 .mirador-container .sidePanel .tab {
-  padding: 4px 6px;
-  border-left: 0;
-  border-bottom: 2px solid #000;
+  padding: 8px;
+  margin-right: 2px;
   display: inline-block;
   cursor: pointer;
-  border-radius: 3px 3px 0 0;
+  background: #dddddd;
+  border-width: 1px 1px 0 1px;
+  border-color: #b1b1b1;
+  border-style: solid;
+  color: #666;
+  font-size: .9em;
 }
 .mirador-container .sidePanel .tab:not(.selected):hover {
-  border: 2px solid rgba(0, 0, 0, 0.3);
-  border-bottom: 2px solid #000;
-  padding: 4px 4px;
+  background: lightGray;
+  color: #333;
 }
 .mirador-container .sidePanel .tab.selected {
-  border: 2px solid #000;
-  border-bottom: 0;
-  border-radius: 3px 3px 0 0;
-  margin: 0 -2px;
+  font-weight: bold;
+  color: #333;
+  background: #efefef;
+  border-top-width: 1px;
+  border-top-style: solid;
+  border-top-color: deepskyblue;
 }
 .mirador-container .sidePanel .annotationListItem {
   list-style-type: none;
@@ -3171,6 +3182,15 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
 .mirador-container .sidePanel a:hover {
   text-decoration: none;
 }
+.mirador-container .sidePanel h2 {
+  font-size: 1em;
+}
+.mirador-container .sidePanel h3 {
+  font-size: .9em;
+}
+.mirador-container .sidePanel h4 {
+  font-size: .8em;
+}
 .mirador-container .sidePanel h1,
 .mirador-container .sidePanel h2,
 .mirador-container .sidePanel h3,
@@ -3195,24 +3215,11 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
   box-sizing: border-box;
   overflow: hidden;
   transition: all 0.3s ease;
+  margin-top: 8px;
 }
 .mirador-container .annotationsPanel ul {
   padding: 0;
   margin: 0;
-}
-.mirador-container .search-results {
-  padding: 0 5px 0 0;
-  margin: 0;
-  position: absolute;
-  height: 100%;
-}
-.mirador-container .search-results .search-results-container {
-  overflow-y: scroll;
-  position: absolute;
-  height: 70%;
-}
-.mirador-container .search-results .search-results-list .result-wrapper .result-paragraph .highlight {
-  background-color: #ffff00;
 }
 .mirador-container .toc {
   margin: 0;
@@ -3225,7 +3232,8 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
   top: 0px;
   bottom: 0;
   list-style-type: none;
-  font-size: 75%;
+  margin-bottom: 30px;
+  /* fix overflow-y bug when .tabGroup is present */
 }
 .mirador-container .toc a.toc-link {
   color: black;
@@ -3253,12 +3261,16 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
   position: relative;
   margin-left: 8px;
   margin-bottom: 5px;
+  border-left: 4px solid #efefef;
 }
 .mirador-container .toc li.selected {
   cursor: pointer;
   overflow: hidden;
   border-left: 4px solid deepskyblue;
   transition: all 0.2s ease-out;
+}
+.mirador-container .toc > li {
+  margin-left: 0;
 }
 .mirador-container .toc-link i {
   color: rgba(0, 0, 0, 0.4);
@@ -3318,13 +3330,6 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
 }
 .mirador-container .toc-link:hover .star {
   color: black;
-}
-.mirador-container .toc li:hover > h2 a.toc-link,
-.mirador-container .toc li:hover > h3 a.toc-link,
-.mirador-container .toc li:hover > h4 a.toc-link,
-.mirador-container .toc li:hover > h5 a.toc-link,
-.mirador-container .toc li:hover > h6 a.toc-link {
-  font-weight: bold;
 }
 .mirador-container {
   /*
@@ -3514,11 +3519,13 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
   text-align: center;
 }
 .mirador-container .mirador-viewer .sub-title {
-  border-bottom: 2px solid #ccc;
-  color: #666;
+  border-bottom: 1px solid #b1b1b1;
+  color: #333;
   font-weight: bold;
   margin: 10px 20px 5px 20px;
   padding: 0 5px 5px 0;
+  font-size: 120%;
+  text-transform: uppercase;
 }
 .mirador-container .mirador-viewer .metadata-listing {
   width: 100%;
@@ -3527,15 +3534,16 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
   box-sizing: border-box;
 }
 .mirador-container .mirador-viewer .metadata-item {
-  padding: 5px 0;
+  padding: 10px 0 5px 0;
 }
 .mirador-container .mirador-viewer .metadata-label,
 .mirador-container .mirador-viewer .metadata-value {
   line-height: 1.5;
 }
 .mirador-container .mirador-viewer .metadata-label {
-  color: #555;
+  color: #666;
   font-style: italic;
+  text-transform: uppercase;
 }
 .mirador-container .mirador-viewer .metadata-value {
   vertical-align: bottom;
@@ -3647,8 +3655,7 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
 }
 .layersPanel .layers-list-item {
   zoom: 1;
-  border-top: 1px solid gray;
-  border-bottom: 1px solid gray;
+  border-top: 1px solid #b1b1b1;
   padding: 10px 10px 10px 0;
   margin-right: 20px;
 }
@@ -3739,6 +3746,38 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
   display: block;
   box-sizing: border-box;
   color: dimgray;
+}
+.mirador-container .search-results {
+  padding: 0 5px 0 0;
+  margin: 0;
+  position: absolute;
+  height: 100%;
+}
+.mirador-container .search-results select {
+  margin: 5px 0 10px 0;
+}
+.mirador-container .search-results-list {
+  position: relative;
+  height: 100%;
+}
+.mirador-container .search-results-list .search-results-messages {
+  border-top: 1px solid #b1b1b1;
+  padding-top: 10px;
+  margin-top: 10px;
+}
+.mirador-container .search-results-list .search-results-count {
+  font-size: .85em;
+}
+.mirador-container .search-results-list .search-results-container {
+  overflow-y: scroll;
+  position: absolute;
+  height: 70%;
+}
+.mirador-container .search-results-list .result-wrapper {
+  margin-bottom: 5px;
+}
+.mirador-container .search-results-list .result-wrapper .result-paragraph .highlight {
+  background-color: #ffff00;
 }
 
 @font-face {
