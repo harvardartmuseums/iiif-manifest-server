@@ -39,10 +39,16 @@
 
           $.ajax({url: collectionParam, datatype: "json", 
               success: function(data) {
+                var location;
                 for (var i = 0; i<data.manifests.length; i++) {
+                  if (data.manifests[i].attribution) {
+                    location = data.manifests[i].attribution;
+                  } else {
+                    location = "";
+                  }
                   manifestList.push({
                     manifestUri: data.manifests[i]["@id"],
-                    location: "Harvard Art Museums"
+                    location: location
                   });
                 }
                 launchMirador();
