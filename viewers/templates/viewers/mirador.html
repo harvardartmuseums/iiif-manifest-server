@@ -21,46 +21,46 @@
     <script src="{% static 'viewers/mirador/mirador.min.js' %}"></script>
     <script type="text/javascript">
 
-     $(function() {
-    var manifestParam = getUrlVar("manifest");
-		var collectionParam = getUrlVar("collection");
-		var showMainMenu = true;
-    var showManifestPage = false;
+      $(function() {
+        var manifestParam = getUrlVar("manifest");
+    		var collectionParam = getUrlVar("collection");
+    		var showMainMenu = true;
+        var showManifestPage = false;
 
-    var manifestList = [];
-    var windowObjects = [];
-    
-    if (getUrlVar("showmainmenu") === "0") {
-      showMainMenu = false;
-    }
+        var manifestList = [];
+        var windowObjects = [];
+        
+        if (getUrlVar("showmainmenu") === "0") {
+          showMainMenu = false;
+        }
 
-    if (collectionParam) {
-      showManifestPage = true;
+        if (collectionParam) {
+          showManifestPage = true;
 
-      $.ajax({url: collectionParam, datatype: "json", 
-          success: function(data) {
-            for (var i = 0; i<data.manifests.length; i++) {
-              manifestList.push({
-                manifestUri: data.manifests[i]["@id"],
-                location: "Harvard Art Museums"
-              });
-            }
-            launchMirador();
-          },
-          error: function(data) {
-            launchMirador();
-          }                
-      });
-    }
+          $.ajax({url: collectionParam, datatype: "json", 
+              success: function(data) {
+                for (var i = 0; i<data.manifests.length; i++) {
+                  manifestList.push({
+                    manifestUri: data.manifests[i]["@id"],
+                    location: "Harvard Art Museums"
+                  });
+                }
+                launchMirador();
+              },
+              error: function(data) {
+                launchMirador();
+              }                
+          });
+        }
 
-		if (manifestParam) {
-			manifestList.push({
-				manifestUri: manifestParam,
-				location: "Unknown"
-			});
-			windowObjects = [{loadedManifest: manifestParam}];
-      launchMirador();
-		}
+    		if (manifestParam) {
+    			manifestList.push({
+    				manifestUri: manifestParam,
+    				location: "Unknown"
+    			});
+    			windowObjects = [{loadedManifest: manifestParam}];
+          launchMirador();
+    		}
 
         function launchMirador() {
       		myMiradorInstance = Mirador({
@@ -89,12 +89,12 @@
                }
       		});
         }
-     });
+      });  
 
-    function getUrlVar(key) {
-		var result = new RegExp(key + "=([^&]*)", "i").exec(window.location.search);
-		return result && unescape(result[1]) || "";
-    }
+      function getUrlVar(key) {
+    		var result = new RegExp(key + "=([^&]*)", "i").exec(window.location.search);
+    		return result && unescape(result[1]) || "";
+      }
     </script>
   </body>
 </html>
