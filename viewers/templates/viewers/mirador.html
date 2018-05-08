@@ -22,15 +22,36 @@
     <script type="text/javascript">
 
      $(function() {
-		var manifestParam = getUrlVar("manifest");
+    var manifestParam = getUrlVar("manifest");
+		var collectionParam = getUrlVar("collection");
 		var showMainMenu = true;
+    var showManifestPage = false;
 
-		if (getUrlVar("showmainmenu") === "0") {
-			showMainMenu = false;
-		}
+    var manifestList = [];
+    var windowObjects = [];
+    
+    if (getUrlVar("showmainmenu") === "0") {
+      showMainMenu = false;
+    }
 
-        var manifestList = [];
-        var windowObjects = [];
+    if (collectionParam) {
+      showManifestPage = true;
+
+      $.ajax({url: collectionParam, datatype: "json", 
+          success: function(data) {
+            for (var i = 0; i<data.manifests.length; i++) {
+              manifestList.push({
+                manifestUri: data.manifests[i]["@id"],
+                location: "Harvard Art Museums"
+              });
+            }
+            launchMirador();
+          },
+          error: function(data) {
+            launchMirador();
+          }                
+      });
+    }
 
 		if (manifestParam) {
 			manifestList.push({
@@ -38,33 +59,36 @@
 				location: "Unknown"
 			});
 			windowObjects = [{loadedManifest: manifestParam}];
+      launchMirador();
 		}
 
-
-		myMiradorInstance = Mirador({
-         id: "viewer",
-         layout: "1x1",
-         buildPath: "{% static 'viewers/mirador/' %}",
-         data: manifestList,
-         windowObjects: windowObjects,
-         annotationEndpoint: {
-           name:"Local Storage",
-           module: "LocalStorageEndpoint"
-         },
-         mainMenuSettings: {
-			show: showMainMenu
-         },
-         "windowSettings": {
-           "canvasControls": { // The types of controls available to be displayed on a canvas
-             "imageManipulation" : {
-               "manipulationLayer" : true,
-               "controls" : {
-                 "mirror" : true
+        function launchMirador() {
+      		myMiradorInstance = Mirador({
+               id: "viewer",
+               layout: "1x1",
+               buildPath: "{% static 'viewers/mirador/' %}",
+               data: manifestList,
+               windowObjects: windowObjects,
+               openManifestsPage: showManifestPage,
+               annotationEndpoint: {
+                 name:"Local Storage",
+                 module: "LocalStorageEndpoint"
+               },
+               mainMenuSettings: {
+      			show: showMainMenu
+               },
+               "windowSettings": {
+                 "canvasControls": { // The types of controls available to be displayed on a canvas
+                   "imageManipulation" : {
+                     "manipulationLayer" : true,
+                     "controls" : {
+                       "mirror" : true
+                     }
+                   }
+                 }
                }
-             }
-           }
-         }
-		});
+      		});
+        }
      });
 
     function getUrlVar(key) {
