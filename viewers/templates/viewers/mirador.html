@@ -57,18 +57,20 @@
                 launchMirador();
               }                
           });
+          
+        } else {
+      		if (manifestParam) {
+      			manifestList.push({
+      				manifestUri: manifestParam,
+      				location: "Unknown"
+      			});
+      			windowObjects = [{loadedManifest: manifestParam}];
+            launchMirador();
+      		} else {
+            launchMirador();
+          }
         }
 
-    		if (manifestParam) {
-    			manifestList.push({
-    				manifestUri: manifestParam,
-    				location: "Unknown"
-    			});
-    			windowObjects = [{loadedManifest: manifestParam}];
-          launchMirador();
-    		} else {
-          launchMirador();
-        }
 
         function launchMirador() {
       		myMiradorInstance = Mirador({
