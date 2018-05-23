@@ -12,7 +12,10 @@ server_options = urlparse(ELASTICSEARCH_URL)
 
 # Connect to elasticsearch db
 def get_connection():
-    return Elasticsearch(host=server_options.hostname, http_auth=(server_options.username, server_options.password), port=server_options.port)
+    if server_options.username is not None:
+        return Elasticsearch(host=server_options.hostname, http_auth=(server_options.username, server_options.password), port=server_options.port)
+    else:
+        return Elasticsearch(host=server_options.hostname, port=server_options.port)
 
 # Gets the content of a manifest, returns JSON
 def get_manifest(manifest_id, source):
