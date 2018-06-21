@@ -68,6 +68,9 @@ def main(data, document_id, source, host):
 		if huam_json["url"]:
 			rendering_url = huam_json["url"]
 	
+	thumbnail_uri = ""
+
+
 	canvasInfo = []
 	for (counter, im) in enumerate(images):
 		info = {}
@@ -97,6 +100,10 @@ def main(data, document_id, source, host):
 
 		canvasInfo.append(info)
 
+		# Get the URI of the first image to use as the manifest thumbnail
+		if counter == 0:
+			thumbnail_uri = im["iiifbaseuri"]
+
 	# start building the manifest
 	mfjson = {
 		"@context":presentationServiceContext,
@@ -114,6 +121,14 @@ def main(data, document_id, source, host):
 				"viewingHint":viewingHint,
 			}
 		],
+		"thumbnail": {
+			"@id": thumbnail_uri + "/full/200,/0/native.jpg",
+			"service": {
+				"@context": imageServiceContext,
+				"@id": thumbnail_uri,
+				"profile": profileLevel
+			} 
+		},
 		"rendering": {
 			"@id": rendering_url,
 			"label": "Full record view",
