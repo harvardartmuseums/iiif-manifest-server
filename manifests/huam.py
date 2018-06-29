@@ -21,7 +21,7 @@ imageServiceContext = "http://iiif.io/api/image/2/context.json"
 presentationServiceContext = "http://iiif.io/api/presentation/2/context.json"
 listServiceContext = "http://www.shared-canvas.org/ns/context.json"
 attributionBase = "Harvard Art Museums"
-logo = "https://www.harvardartmuseums.org/assets/images/logo.png"
+logoUriBase = "https://ids.lib.harvard.edu/ids/iiif/437958013"
 
 http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
 
@@ -111,7 +111,14 @@ def main(data, document_id, source, host):
 		"@type":"sc:Manifest",
 		"label":manifestLabel,
 		"attribution":attribution,
-		"logo":logo,
+		"logo": {
+			"@id": logoUriBase + "/full/!800,800/0/native.jpg",
+			"service": {
+				"@context": imageServiceContext,
+				"@id": logoUriBase,
+				"profile": profileLevel
+			} 
+		},
 		"description":manifestDescription,
 		"within": "https://www.harvardartmuseums.org/collections",
 		"sequences": [
