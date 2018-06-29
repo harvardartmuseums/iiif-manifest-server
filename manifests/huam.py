@@ -122,7 +122,7 @@ def main(data, document_id, source, host):
 			}
 		],
 		"thumbnail": {
-			"@id": thumbnail_uri + "/full/200,/0/native.jpg",
+			"@id": thumbnail_uri + "/full/!170,170/0/native.jpg",
 			"service": {
 				"@context": imageServiceContext,
 				"@id": thumbnail_uri,
