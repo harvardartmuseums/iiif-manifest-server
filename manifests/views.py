@@ -122,10 +122,15 @@ def get_huam_gallery(document_id, source):
     return (True, json.dumps(j))
 
 def get_huam_annotations(document_id, canvas_id, source):
-    huam_url = HUAM_API_URL + "annotation?apikey=%s&size=100&q=feature:region AND idsid:%s" % (HUAM_API_KEY, canvas_id)
+    huam_url = HUAM_API_URL + "annotation"
+    fields = {
+        "apikey": HUAM_API_KEY,
+        "size": 100,
+        "q": "feature:region AND idsid:" + canvas_id
+    }
 
     http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-    response = http.request('GET', huam_url)
+    response = http.request('GET', huam_url, fields)
     huam = response.data
 
     if (huam.decode('utf8')==''):
