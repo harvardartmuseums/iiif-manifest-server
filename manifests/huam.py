@@ -55,10 +55,13 @@ def main(data, document_id, source, host):
 
 	## List of different image labels
 	## @displayLabel = Full Image, @note = Color digital image available, @note = Harvard Map Collection copy image
+	images = []
 	if source in ["object", "exhibition"]:
-		images = huam_json["images"]
+		if 'images' in huam_json:
+			images = huam_json["images"]
 	elif source == "gallery":
-		images = huam_json["objects"]
+		if 'objects' in huam_json:
+			images = huam_json["objects"]
 
 	# print("Images list", images)
 
@@ -91,18 +94,26 @@ def main(data, document_id, source, host):
 			else:
 				info['label'] = str(counter+1)
 
+		info['image'] = ""
+		info['baseuri'] = ""
 		if source in ["object", "exhibition"]:
 			info['image'] = im["idsid"]
 			info['baseuri'] = im["iiifbaseuri"]
 		elif source == "gallery":
-			info['image'] = im["images"][0]["idsid"]
-			info['baseuri'] = im["images"][0]["iiifbaseuri"]
+			if len(im["images"]) > 0:
+				info['image'] = im["images"][0]["idsid"]
+				info['baseuri'] = im["images"][0]["iiifbaseuri"]
 
 		canvasInfo.append(info)
 
 		# Get the URI of the first image to use as the manifest thumbnail
+		thumbnail_uri = ""
 		if counter == 0:
-			thumbnail_uri = im["iiifbaseuri"]
+			if source in ["object", "exhibition"]:
+				thumbnail_uri = im["iiifbaseuri"]
+			elif source == "gallery":
+				if len(im["images"]) > 0:
+					thumbnail_uri = im["images"][0]["iiifbaseuri"]
 
 	# start building the manifest
 	mfjson = {
