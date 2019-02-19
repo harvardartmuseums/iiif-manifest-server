@@ -13,10 +13,31 @@
        height: 100%;
        position: fixed;
      }
+     #json-panel {
+      position: absolute;
+      height: 20%;
+      width: 30%;
+      background-color: rgba(255,255,255,0.94);
+      display: none;
+      overflow: hidden;
+      z-index: 5;
+      right: 0;
+      top: 30px;
+      padding: 10px;
+   }
+   #json-panel h3 {
+      text-align: center;
+   }
+   #json-panel textarea {
+      width: 100%;
+      height: 60%;
+   }
+     
     </style>
   </head>
   <body>
     <div id="viewer"></div>
+    <div id="json-panel"><h3>Grab the Configuration Info</h3><textarea></textarea></div>
 
     <script src="{% static 'viewers/mirador/mirador.min.js' %}"></script>
     <script type="text/javascript">
@@ -26,6 +47,8 @@
     		var collectionParam = getUrlVar("collection");
     		var showMainMenu = true;
         var showManifestPage = false;
+
+        var myMiradorInstance;
 
         var manifestList = [];
         var windowObjects = [];
@@ -84,10 +107,23 @@
                  name:"Local Storage",
                  module: "LocalStorageEndpoint"
                },
-               mainMenuSettings: {
-      			show: showMainMenu
+               sidePanelOptions: {
+                tocTabAvailable: true,
+                layersTabAvailable: true,
+                searchTabAvailable: true
                },
-               "windowSettings": {
+               mainMenuSettings: {
+                 show: showMainMenu,
+                 userButtons: [
+                   {
+                     label: "Get JSON",
+                     iconClass: "fa fa-cog",
+                     attributes: { "id": "get-json", "href": "#no-op"}
+                    }
+                  ]
+                },
+                windowSettings: {
+                 sidePanelVisible: false,
                  "canvasControls": { // The types of controls available to be displayed on a canvas
                    "imageManipulation" : {
                      "manipulationLayer" : true,
@@ -98,8 +134,17 @@
                  }
                }
       		});
-        }
+        }  
+
+        $(document).on('click', "#get-json", function() {
+          config = JSON.stringify(myMiradorInstance.saveController.cleanup(myMiradorInstance.saveController.currentConfig));
+          $("#json-panel textarea").text(config);
+          $("#json-panel").toggle();
+        });
+
       });  
+
+
 
       function getUrlVar(key) {
     		var result = new RegExp(key + "=([^&]*)", "i").exec(window.location.search);
