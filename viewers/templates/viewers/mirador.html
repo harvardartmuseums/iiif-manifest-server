@@ -13,7 +13,7 @@
        height: 100%;
        position: fixed;
      }
-     #json-panel {
+     #json-panel, #annotations-panel {
       position: absolute;
       height: 20%;
       width: 30%;
@@ -25,7 +25,7 @@
       top: 30px;
       padding: 10px;
    }
-   #json-panel h3 {
+   #json-panel h3, #annotations-panel h3 {
       text-align: center;
    }
    #json-panel textarea {
@@ -38,7 +38,7 @@
   <body>
     <div id="viewer"></div>
     <div id="json-panel"><h3>Grab the Configuration Info</h3><textarea></textarea></div>
-
+    <div id="annotations-panel"><h3>Grab the Annotations</h3><div id="annotations"></div></div>
     <script src="{% static 'viewers/mirador/mirador.min.js' %}"></script>
     <script type="text/javascript">
 
@@ -144,7 +144,31 @@
 
       });  
 
+      $('body').on('click', '#exportAnnotations', function(){
+        $("#annotations-panel").toggle();
+        $('#annotations').html('<br/>Annotations: <br/>');
+        $('#annotations').append("<div id='jsonoutput'></div>");
+            var annotations = {};
+            annotations['@context'] = "http://www.shared-canvas.org/ns/context.json";
+            annotations['@id'] = "annotations.json";
+            annotations['@type'] = "sc:AnnotationList";
 
+            for ( i = 0; i < localStorage.length; i++ ){
+                if ((localStorage.key(i)).substring(0,7) == 'http://'){
+                      var q = JSON.parse(localStorage.getItem(localStorage.key(i)));
+                      console.log(q);
+                      annotations['resources'] = q;
+                    var blob = new Blob([JSON.stringify(annotations)], {type: "application/json"});
+                    var url = URL.createObjectURL(blob);
+                    var a = document.createElement('a');
+                    a.href = url;
+                    a.target = "_blank";
+                    a.textContent = "canvas: " + q[0]['on'][0]['full'];
+                    $('#annotations').append(a);
+                    $('#annotations').append("<br/>");
+                }
+            }
+        });
 
       function getUrlVar(key) {
     		var result = new RegExp(key + "=([^&]*)", "i").exec(window.location.search);
