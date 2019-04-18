@@ -159,7 +159,7 @@
             annotations['@type'] = "sc:AnnotationList";
 
             for ( i = 0; i < localStorage.length; i++ ){
-                if ((localStorage.key(i)).substring(0,7) == 'http://'){
+                if ((localStorage.key(i)).substring(0,7) == 'http://' || (localStorage.key(i)).substring(0,8) == 'https://'){
                       var q = JSON.parse(localStorage.getItem(localStorage.key(i)));
                       console.log(q);
                       annotations['resources'] = q;
