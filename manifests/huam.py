@@ -107,7 +107,6 @@ def main(data, document_id, source, host):
 		canvasInfo.append(info)
 
 		# Get the URI of the first image to use as the manifest thumbnail
-		thumbnail_uri = ""
 		if counter == 0:
 			if source in ["object", "exhibition"]:
 				thumbnail_uri = im["iiifbaseuri"]
