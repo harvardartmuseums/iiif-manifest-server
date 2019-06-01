@@ -76,7 +76,13 @@ def main(data, document_id, source, host):
 
 	canvasInfo = []
 	for (counter, im) in enumerate(images):
-		info = {}
+		info = {
+			"label": "",
+			"image": "",
+			"baseuri": "",
+			"width": 0,
+			"height": 0
+		}
 
 		if source == "object":
 			if im["publiccaption"]:
@@ -94,15 +100,17 @@ def main(data, document_id, source, host):
 			else:
 				info['label'] = str(counter+1)
 
-		info['image'] = ""
-		info['baseuri'] = ""
 		if source in ["object", "exhibition"]:
 			info['image'] = im["idsid"]
 			info['baseuri'] = im["iiifbaseuri"]
+			info['width'] = im["width"]
+			info['height'] = im["height"]
 		elif source == "gallery":
 			if len(im["images"]) > 0:
 				info['image'] = im["images"][0]["idsid"]
 				info['baseuri'] = im["images"][0]["iiifbaseuri"]
+				info['width'] = im["images"][0]["width"]
+				info['height'] = im["images"][0]["height"]
 
 		canvasInfo.append(info)
 
@@ -266,19 +274,22 @@ def main(data, document_id, source, host):
 
 	for cvs in canvasInfo:
 		try: 
-			response = http.request('GET', cvs['baseuri'] + imageInfoSuffix)
-			huam_image = response.data
+			if cvs['width'] == 0 or cvs['height'] == 0: 
+				response = http.request('GET', cvs['baseuri'] + imageInfoSuffix)
+				huam_image = response.data
+				infojson = json.loads(huam_image.decode('utf-8'))
+				cvs['width'] = infojson['width']
+				cvs['height'] = infojson['height']
 
 			canvas_uri = manifest_uri + "/canvas/canvas-%s" % cvs['image']
 			list_url = manifest_uri + "/list/%s" % cvs['image']
 
-			infojson = json.loads(huam_image.decode('utf-8'))
 			cvsjson = {
 				"@id": canvas_uri,
 				"@type": "sc:Canvas",
 				"label": cvs['label'],
-				"height": infojson['height'],
-				"width": infojson['width'],
+				"height": cvs['height'],
+				"width": cvs['width'],
 				"images": [
 					{
 						"@id":manifest_uri+"/annotation/anno-%s" % cvs['image'],
@@ -288,8 +299,8 @@ def main(data, document_id, source, host):
 							"@id": imageUriBase + str(cvs['image']) + imageUriSuffix,
 							"@type": "dctypes:Image",
 							"format":"image/jpeg",
-							"height": infojson['height'],
-							"width": infojson['width'],
+							"height": cvs['height'],
+							"width": cvs['width'],
 							"service": { 
 							  "@context": imageServiceContext,
 							  "@id": imageUriBase + str(cvs['image']),
