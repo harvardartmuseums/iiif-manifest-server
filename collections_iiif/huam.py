@@ -7,7 +7,7 @@ import certifi
 imageHash = {}
 
 imageUriBase = "https://ids.lib.harvard.edu/ids/iiif/"
-imageUriSuffix = "/full/full/0/native.jpg"
+imageUriSuffix = "/full/full/0/default.jpg"
 imageInfoSuffix = "/info.json"
 manifestUriBase = ""
 collectionUriBase = ""

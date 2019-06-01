@@ -12,7 +12,7 @@ HAM_API_URL = getattr(settings, 'HAM_API_URL', '')
 
 hamAnnotationUriBase = HAM_API_URL + "annotation/"
 imageUriBase = "https://ids.lib.harvard.edu/ids/iiif/"
-imageUriSuffix = "/full/full/0/native.jpg"
+imageUriSuffix = "/full/full/0/default.jpg"
 imageInfoSuffix = "/info.json"
 manifestUriBase = ""
 serviceBase = imageUriBase
@@ -123,7 +123,7 @@ def main(data, document_id, source, host):
 		"label":manifestLabel,
 		"attribution":attribution,
 		"logo": {
-			"@id": logoUriBase + "/full/!800,800/0/native.jpg",
+			"@id": logoUriBase + "/full/!800,800/0/default.jpg",
 			"service": {
 				"@context": imageServiceContext,
 				"@id": logoUriBase,
@@ -140,7 +140,7 @@ def main(data, document_id, source, host):
 			}
 		],
 		"thumbnail": {
-			"@id": thumbnail_uri + "/full/!170,170/0/native.jpg",
+			"@id": thumbnail_uri + "/full/!170,170/0/default.jpg",
 			"service": {
 				"@context": imageServiceContext,
 				"@id": thumbnail_uri,
