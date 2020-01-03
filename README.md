@@ -14,7 +14,9 @@ The server is configured to run over HTTPS in staging and production environment
 This application requires the following environment variables.  
 
 ```
-ELASTICSEARCH_URL = localhost:9200
+ELASTICSEARCH_URL = http://localhost:9200
+ELASTICSEARCH_URL_STAGING = http://...
+ELASTICSEARCH_URL_DEV  = http://...
 ELASTICSEARCH_INDEX = manifests
 HAM_API_KEY = 000000-00000-00000-000000-000000
 HAM_API_URL = https://api.harvardartmuseums.org
