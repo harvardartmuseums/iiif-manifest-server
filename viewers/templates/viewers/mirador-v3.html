@@ -1,0 +1,77 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <script src="{% static 'helpers.js' %}"></script>
+    <script src="https://unpkg.com/mirador@alpha/dist/mirador.min.js"></script>
+
+    <title>Harvard Art Museums | Mirador Viewer</title>
+  </head>
+  <body>
+    <div id="viewer"></div>
+    <script type="text/javascript">
+
+        const manifestParam = getUrlVar("manifest");
+        const collectionParam = getUrlVar("collection");
+        const showMainMenu = getUrlVar("showmainmenu");
+
+        const defaultSettings = {
+          id: "viewer",
+          // All of the settings (with descriptions (ﾉ^∇^)ﾉﾟ) located here:
+          // https://github.com/ProjectMirador/mirador/blob/master/src/config/settings.js
+          language: 'en', // The default language set in the application
+          window: {
+            allowClose: true, // Configure if windows can be closed or not
+            allowFullscreen: true, // Configure to show a "fullscreen" button in the WindowTopBar
+            allowMaximize: true, // Configure if windows can be maximized or not
+            authNewWindowCenter: 'parent', // Configure how to center a new window created by the authentication flow. Options: parent, screen
+            defaultSideBarPanel: 'info', // Configure which sidebar is selected by default. Options: info, attribution, canvas, annotations
+            defaultView: 'single',  // Configure which viewing mode (e.g. single, book, gallery) for windows to be opened in
+            hideAnnotationsPanel: false, // Configure to hide the annotations panel in the WindowSideBarButtons
+            hideSearchPanel: false, // Configure to hide search panel in the WindowSideBarButtons
+            hideWindowTitle: false, // Configure if the window title is shown in the window title bar or not
+            sideBarOpenByDefault: true, // Configure if the sidebar (and its content panel) is open by default
+          },
+          workspace: {
+            showZoomControls: true, // Configure if zoom controls should be displayed by default
+            type: 'mosaic', // Which workspace type to load by default. Other possible values are "elastic"
+          },
+          workspaceControlPanel: {
+            enabled: true, // Configure if the control panel should be rendered.  Useful if you want to lock the viewer down to only the configured manifests
+          },
+          themes: {
+              HAM: {
+                  palette: {
+                      type: 'light',
+                      primary: {
+                          main: '#ffffff'
+                      },
+                      secondary: {
+                          main: "#ffffff"
+                      }
+                  }
+              },
+          },
+          selectedTheme: 'HAM',
+        };
+  
+        // Fire up an instance of Mirador Viewer
+        const mirador = Mirador.viewer(defaultSettings);
+
+        // Create a window for the manifest in the query string
+        if (manifestParam) {
+            mirador.store.dispatch(
+                mirador.actions.addWindow({
+                    manifestId: manifestParam,
+                })
+            );      
+        }       
+    </script>
+    
+  </body>
+  </html>
+  

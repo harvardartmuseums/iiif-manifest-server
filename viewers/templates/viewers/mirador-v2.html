@@ -5,6 +5,8 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <script src="{% static 'helpers.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'viewers/mirador/css/mirador-combined.css' %}">
     <title>Harvard Art Museums | Mirador Viewer</title>
     <style type="text/css">
@@ -174,11 +176,6 @@
                 }
             }
         });
-
-      function getUrlVar(key) {
-    		var result = new RegExp(key + "=([^&]*)", "i").exec(window.location.search);
-    		return result && unescape(result[1]) || "";
-      }
     </script>
   </body>
 </html>
