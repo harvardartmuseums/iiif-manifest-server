@@ -43,6 +43,7 @@
           workspaceControlPanel: {
             enabled: showWorkspaceControlPanel, // Configure if the control panel should be rendered.  Useful if you want to lock the viewer down to only the configured manifests
           },
+          manifests: {{manifestList | safe}},
           themes: {
               HAM: {
                   palette: {
@@ -64,12 +65,18 @@
 
         // Create a window for the manifest in the query string
         if (manifestParam) {
-            mirador.store.dispatch(
-                mirador.actions.addWindow({
-                    manifestId: manifestParam,
-                })
-            );      
+          mirador.store.dispatch(
+              mirador.actions.addWindow({
+                  manifestId: manifestParam,
+              })
+          );      
         }       
+
+        if (collectionParam) {
+          mirador.store.dispatch(
+            mirador.actions.setWorkspaceAddVisibility(true)
+          ); 
+        }
     </script>
     
   </body>
