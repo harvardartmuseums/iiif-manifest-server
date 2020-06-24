@@ -7,7 +7,7 @@ The server is configured to run over HTTPS in staging and production environment
 ## Requirements
 
 * Python 3.*
-* Elasticsearch
+* Elasticsearch 5.6
 
 ## Configuration
 
@@ -17,7 +17,7 @@ This application requires the following environment variables.
 ELASTICSEARCH_URL = http://localhost:9200
 ELASTICSEARCH_INDEX = manifests
 HAM_API_KEY = 000000-00000-00000-000000-000000
-HAM_API_URL = https://api.harvardartmuseums.org
+HAM_API_URL = https://api.harvardartmuseums.org/
 PYTHON_DJANGO_SECRET_KEY = SOME_LONG_SET_OF_RANDOM_CHARACTERS
 DJANGO_DEBUG = False
 ```
