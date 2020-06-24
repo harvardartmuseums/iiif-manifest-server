@@ -13,7 +13,7 @@ server_options = urlparse(ELASTICSEARCH_URL)
 # Connect to elasticsearch db
 def get_connection():
     if server_options.username is not None:
-        return Elasticsearch(host=server_options.hostname, http_auth=(server_options.username, server_options.password), port=server_options.port)
+        return Elasticsearch(host=server_options.hostname, use_ssl=True, http_auth=(server_options.username, server_options.password), port=server_options.port)
     else:
         return Elasticsearch(host=server_options.hostname, port=server_options.port)
 

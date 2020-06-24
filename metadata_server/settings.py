@@ -106,7 +106,7 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.app_directories.Loader',
 )
 
-ELASTICSEARCH_INDEX = os.environ.get('ELASTICSEARCH_IIIF_INDEX')
+ELASTICSEARCH_INDEX = os.environ.get('ELASTICSEARCH_INDEX')
 ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
 
 HAM_API_KEY = os.environ.get('HAM_API_KEY')
