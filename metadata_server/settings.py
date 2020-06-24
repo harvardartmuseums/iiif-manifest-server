@@ -107,15 +107,7 @@ TEMPLATE_LOADERS = (
 )
 
 ELASTICSEARCH_INDEX = os.environ.get('ELASTICSEARCH_IIIF_INDEX')
-
-if os.environ.get('PYTHON_ENV') == "production":
-    ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
-
-if os.environ.get('PYTHON_ENV') == "staging":
-    ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL_STAGING')
-
-if os.environ.get('PYTHON_ENV') == "development":
-    ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL_DEV')
+ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
 
 HAM_API_KEY = os.environ.get('HAM_API_KEY')
 HAM_API_URL = os.environ.get('HAM_API_URL')
