@@ -106,6 +106,10 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.app_directories.Loader',
 )
 
+ELASTIC_CLOUD_ID = os.environ.get('ELASTIC_CLOUD_ID')
+ELASTIC_CLOUD_USERNAME = os.environ.get('ELASTIC_CLOUD_USERNAME')
+ELASTIC_CLOUD_PASSWORD = os.environ.get('ELASTIC_CLOUD_PASSWORD')
+
 ELASTICSEARCH_INDEX = os.environ.get('ELASTICSEARCH_INDEX')
 ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
 

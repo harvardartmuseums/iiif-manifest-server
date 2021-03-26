@@ -1,8 +1,8 @@
-certifi==2017.7.27.1
+certifi==2020.12.5
 Django==1.8.1
 django-cors-headers==1.1.0
-elasticsearch==5.5.3
+elasticsearch==7.12.0
 gunicorn==19.3.0
-python-dotenv==0.13.0
+python-dotenv==0.15.0
 urllib3==1.25.9
 whitenoise==3.3.0
