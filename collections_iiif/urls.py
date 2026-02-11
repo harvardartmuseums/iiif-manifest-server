@@ -1,8 +1,8 @@
-from django.conf.urls import patterns, url
+from django.urls import re_path
 
 from collections_iiif import views
 
-urlpatterns = patterns('',
-    url(r'^top', views.top, name='top'),
-    url(r'^(?P<document_type>(object))$', views.collection, name='collection'),
-)
+urlpatterns = [
+    re_path(r'^top', views.top, name='top'),
+    re_path(r'^(?P<document_type>(object))$', views.collection, name='collection'),
+]

@@ -22,14 +22,12 @@ SECRET_KEY = os.environ.get('PYTHON_DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(os.environ.get('DJANGO_DEBUG',''))
 
-TEMPLATE_DEBUG = True
-
 ALLOWED_HOSTS = ['*']
 
 
 # Application definition
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,9 +38,11 @@ INSTALLED_APPS = (
     'manifests',
     'viewers',
     'corsheaders',
-)
+]
 
-MIDDLEWARE_CLASSES = (
+# Modern middleware setting (replaces MIDDLEWARE_CLASSES)
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
@@ -51,8 +51,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-)
+]
 
 ROOT_URLCONF = 'metadata_server.urls'
 
@@ -101,10 +100,23 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
 
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-)
+# TEMPLATES setting required by modern Django
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.template.context_processors.static',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
 
 ELASTIC_CLOUD_ID = os.environ.get('ELASTIC_CLOUD_ID')
 ELASTIC_CLOUD_USERNAME = os.environ.get('ELASTIC_CLOUD_USERNAME')
@@ -117,9 +129,15 @@ HAM_API_KEY = os.environ.get('HAM_API_KEY')
 HAM_API_URL = os.environ.get('HAM_API_URL')
 
 # CORS
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_ALL_ORIGINS = True
 
 
 if os.environ.get('PYTHON_ENV') != "development":
     SECURE_SSL_REDIRECT = True 
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Default primary key field type for Django 3.2+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Optionally use whitenoise static file storage for production
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'

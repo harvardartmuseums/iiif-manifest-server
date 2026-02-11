@@ -1,11 +1,9 @@
-from django.conf.urls import patterns, include, url
-
+from django.urls import include, path
 from django.contrib import admin
-admin.autodiscover()
 
-urlpatterns = patterns('',
-    url(r'^collections/', include('collections_iiif.urls')),
-    url(r'^manifests/', include('manifests.urls')),
-    url(r'^viewers/', include('viewers.urls')),
-    url(r'^admin/', include(admin.site.urls)),
-)
+urlpatterns = [
+    path('collections/', include('collections_iiif.urls')),
+    path('manifests/', include('manifests.urls')),
+    path('viewers/', include('viewers.urls')),
+    path('admin/', admin.site.urls),
+]
