@@ -130,7 +130,8 @@ def get_huam_annotations(document_id, canvas_id, source):
     }
 
     http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-    response = http.request('GET', huam_url, fields)
+    response = http.request('GET', huam_url, fields=fields)
+
     huam = response.data
 
     if (huam.decode('utf8')==''):
