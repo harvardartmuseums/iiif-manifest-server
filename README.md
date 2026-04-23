@@ -7,7 +7,7 @@ The server is configured to run over HTTPS in staging and production environment
 ## Requirements
 
 * Python 3.*
-* Elasticsearch 7.17.*
+* Elasticsearch 9.*
 
 ## Configuration
 
