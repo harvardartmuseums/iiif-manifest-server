@@ -49,14 +49,6 @@ def manifest_exists(manifest_id, source):
     es = get_connection()
     return es.exists(index=ELASTICSEARCH_INDEX, id=make_doc_id(manifest_id, source))
 
-def get_all_manifest_ids_with_type(source):
-    es = get_connection()
-    results = es.search(index="manifests", fields="[]")
-    ids = []
-    for r in results["hits"]["hits"]:
-        ids.append(str(r["_id"]))
-    return ids
-
 def get_all_manifest_ids():
     es = get_connection()
     results = es.search(index="manifests", fields="[]")
