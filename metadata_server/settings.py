@@ -128,6 +128,8 @@ ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
 HAM_API_KEY = os.environ.get('HAM_API_KEY')
 HAM_API_URL = os.environ.get('HAM_API_URL')
 
+MANIFEST_MAX_AGE_DAYS = int(os.environ.get('MANIFEST_MAX_AGE_DAYS', 30))
+
 # CORS
 CORS_ALLOW_ALL_ORIGINS = True
 

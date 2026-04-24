@@ -47,7 +47,7 @@ def delete(request, document_type, document_id):
     # Check if manifest exists
     source = document_type
     id = document_id
-    has_manifest = models.manifest_exists(id, source)
+    (has_manifest, _) = models.manifest_exists(id, source)
 
     if has_manifest:
         models.delete_manifest(id, source)
@@ -133,11 +133,10 @@ def add_headers(response):
 # Uses other helper methods to create JSON
 def get_manifest(document_id, source, force_refresh, host):
     # Check if manifest exists
-    has_manifest = models.manifest_exists(document_id, source)
+    (has_manifest, age_days) = models.manifest_exists(document_id, source)
+    is_stale = age_days is not None and age_days > models.MANIFEST_MAX_AGE_DAYS
 
-    ## TODO: add last modified check
-
-    if not has_manifest or force_refresh:
+    if not has_manifest or force_refresh or is_stale:
         if source == "object":
             (success, response) = get_huam(document_id, source)
         elif source == "gallery":
