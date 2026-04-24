@@ -42,6 +42,9 @@ def add_or_update_manifest(manifest_id, document, source):
     es = get_connection()
     body = {
         "last_updated": datetime.datetime.now(),
+        "type": "manifest",
+        "resource": source,
+        "id": manifest_id,
         "v2": json.loads(document)
     }
     es.index(index=ELASTICSEARCH_INDEX, id=make_doc_id(manifest_id, source), body=body)
