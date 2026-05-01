@@ -6,7 +6,7 @@ import certifi
 
 imageHash = {}
 
-imageUriBase = "https://ids.lib.harvard.edu/ids/iiif/"
+imageUriBase = "https://nrs.harvard.edu/"
 imageUriSuffix = "/full/full/0/default.jpg"
 imageInfoSuffix = "/info.json"
 manifestUriBase = ""
@@ -84,10 +84,10 @@ def main(data, document_id, source, host):
 				info['label'] = str(counter+1)
 
 		if source in ["object", "exhibition"]:
-			info['image'] = im["idsid"]
+			info['imageid'] = im["imageid"]
 			info['baseuri'] = im["iiifbaseuri"]
 		elif source == "gallery":
-			info['image'] = im["images"][0]["idsid"]
+			info['imageid'] = im["images"][0]["imageid"]
 			info['baseuri'] = im["images"][0]["iiifbaseuri"]
 
 		canvasInfo.append(info)
@@ -218,29 +218,29 @@ def main(data, document_id, source, host):
 
 			infojson = json.loads(huam_image.decode('utf-8'))
 			cvsjson = {
-				"@id": manifest_uri + "/canvas/canvas-%s" % cvs['image'],
+				"@id": manifest_uri + "/canvas/canvas-%s" % cvs['imageid'],
 				"@type": "sc:Canvas",
 				"label": cvs['label'],
 				"height": infojson['height'],
 				"width": infojson['width'],
 				"images": [
 					{
-						"@id":manifest_uri+"/annotation/anno-%s" % cvs['image'],
+						"@id":manifest_uri+"/annotation/anno-%s" % cvs['imageid'],
 						"@type": "oa:Annotation",
 						"motivation": "sc:painting",
 						"resource": {
-							"@id": imageUriBase + cvs['image'] + imageUriSuffix,
+							"@id": imageUriBase + cvs['imageid'] + imageUriSuffix,
 							"@type": "dctypes:Image",
 							"format":"image/jpeg",
 							"height": infojson['height'],
 							"width": infojson['width'],
 							"service": { 
 							  "@context": imageServiceContext,
-							  "@id": imageUriBase + cvs['image'],
+							  "@id": imageUriBase + cvs['imageid'],
 							  "profile": profileLevel
 							},
 						},
-						"on": manifest_uri + "/canvas/canvas-%s" % cvs['image']
+						"on": manifest_uri + "/canvas/canvas-%s" % cvs['imageid']
 					}
 				]
 			}

@@ -30,11 +30,11 @@ def list(request, document_type, document_id, canvas_id):
 # Returns a IIIF manifest of a METS, MODS or HUAM JSON object
 # Checks if DB has it, otherwise creates it
 def manifest(request, document_type, document_id):
-    # parts = document_id.split(":")
     host = request.META['HTTP_HOST']
+    protocol = "https" if request.is_secure() else "http"
     source = document_type
     id = document_id
-    (success, response_doc, real_id, real_source) = get_manifest(id, source, False, host)
+    (success, response_doc, real_id, real_source) = get_manifest(id, source, False, host, protocol)
     if success:
         response = HttpResponse(response_doc)
         add_headers(response)
@@ -59,9 +59,10 @@ def delete(request, document_type, document_id):
 # Pull METS, MODS or HUAM JSON, rerun conversion script, and store in db
 def refresh(request, document_type, document_id):
     host = request.META['HTTP_HOST']
+    protocol = "https" if request.is_secure() else "http"
     source = document_type
     id = document_id
-    (success, response_doc, real_id, real_source) = get_manifest(id, source, True, host)
+    (success, response_doc, real_id, real_source) = get_manifest(id, source, True, host, protocol)
 
     if success:
         response = HttpResponse(response_doc)
@@ -111,7 +112,8 @@ def get_huam_annotations(document_id, canvas_id, source):
     fields = {
         "apikey": HUAM_API_KEY,
         "size": 100,
-        "q": "feature:region AND idsid:" + canvas_id
+        "feature": "region",
+        "image": canvas_id
     }
 
     http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
@@ -131,7 +133,7 @@ def add_headers(response):
     return response
 
 # Uses other helper methods to create JSON
-def get_manifest(document_id, source, force_refresh, host):
+def get_manifest(document_id, source, force_refresh, host, protocol):
     # Check if manifest exists
     (has_manifest, age_days) = models.manifest_exists(document_id, source)
     is_stale = age_days is not None and age_days > models.MANIFEST_MAX_AGE_DAYS
@@ -146,7 +148,7 @@ def get_manifest(document_id, source, force_refresh, host):
             return (success, response, document_id, source) # This is actually the 404 HttpResponse, so return and end the function
  
         # Convert to shared canvas model if successful
-        converted_json = huam.main(response, document_id, source, host)
+        converted_json = huam.main(response, document_id, source, host, protocol)
 
         # Store to elasticsearch
         models.add_or_update_manifest(document_id, converted_json, source)

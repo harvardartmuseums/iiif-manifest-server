@@ -11,7 +11,7 @@ imageHash = {}
 HAM_API_URL = getattr(settings, 'HAM_API_URL', '')
 
 hamAnnotationUriBase = HAM_API_URL + "annotation/"
-imageUriBase = "https://ids.lib.harvard.edu/ids/iiif/"
+imageUriBase = "https://nrs.harvard.edu/"
 imageUriSuffix = "/full/full/0/default.jpg"
 imageInfoSuffix = "/info.json"
 manifestUriBase = ""
@@ -21,15 +21,15 @@ imageServiceContext = "http://iiif.io/api/image/2/context.json"
 presentationServiceContext = "http://iiif.io/api/presentation/2/context.json"
 listServiceContext = "http://www.shared-canvas.org/ns/context.json"
 attributionBase = "Harvard Art Museums"
-logoUriBase = "https://ids.lib.harvard.edu/ids/iiif/437958013"
+logoUriBase = "https://nrs.harvard.edu/urn-3:HUAM:logo2"
 
 http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
 
-def main(data, document_id, source, host):
+def main(data, document_id, source, host, protocol):
 	global imageHash 
 	imageHash = {}
 	global manifestUriBase
-	manifestUriBase = "https://%s/manifests/" % host
+	manifestUriBase = "%s://%s/manifests/" % (protocol, host)
 
 	huam_json = json.loads(data)
 	attribution = attributionBase
@@ -78,7 +78,7 @@ def main(data, document_id, source, host):
 	for (counter, im) in enumerate(images):
 		info = {
 			"label": "",
-			"image": "",
+			"imageid": "",
 			"baseuri": "",
 			"width": 0,
 			"height": 0
@@ -101,14 +101,14 @@ def main(data, document_id, source, host):
 				info['label'] = str(counter+1)
 
 		if source in ["object", "exhibition"]:
-			info['image'] = im["idsid"]
-			info['baseuri'] = im["iiifbaseuri"]
+			info['imageid'] = im["imageid"]
+			info['baseuri'] = im["baseimageurl"]
 			info['width'] = im["width"]
 			info['height'] = im["height"]
 		elif source == "gallery":
 			if len(im["images"]) > 0:
-				info['image'] = im["images"][0]["idsid"]
-				info['baseuri'] = im["images"][0]["iiifbaseuri"]
+				info['imageid'] = im["images"][0]["imageid"]
+				info['baseuri'] = im["images"][0]["baseimageurl"]
 				info['width'] = im["images"][0]["width"]
 				info['height'] = im["images"][0]["height"]
 
@@ -117,10 +117,10 @@ def main(data, document_id, source, host):
 		# Get the URI of the first image to use as the manifest thumbnail
 		if counter == 0:
 			if source in ["object", "exhibition"]:
-				thumbnail_uri = im["iiifbaseuri"]
+				thumbnail_uri = im["baseimageurl"]
 			elif source == "gallery":
 				if len(im["images"]) > 0:
-					thumbnail_uri = im["images"][0]["iiifbaseuri"]
+					thumbnail_uri = im["images"][0]["baseimageurl"]
 
 	# start building the manifest
 	mfjson = {
@@ -281,8 +281,8 @@ def main(data, document_id, source, host):
 				cvs['width'] = infojson['width']
 				cvs['height'] = infojson['height']
 
-			canvas_uri = manifest_uri + "/canvas/canvas-%s" % cvs['image']
-			list_url = manifest_uri + "/list/%s" % cvs['image']
+			canvas_uri = manifest_uri + "/canvas/canvas-%s" % cvs['imageid']
+			list_url = manifest_uri + "/list/%s" % cvs['imageid']
 
 			cvsjson = {
 				"@id": canvas_uri,
@@ -292,18 +292,18 @@ def main(data, document_id, source, host):
 				"width": cvs['width'],
 				"images": [
 					{
-						"@id":manifest_uri+"/annotation/anno-%s" % cvs['image'],
+						"@id":manifest_uri+"/annotation/anno-%s" % cvs['imageid'],
 						"@type": "oa:Annotation",
 						"motivation": "sc:painting",
 						"resource": {
-							"@id": imageUriBase + str(cvs['image']) + imageUriSuffix,
+							"@id": cvs['baseuri'] + imageUriSuffix,
 							"@type": "dctypes:Image",
 							"format":"image/jpeg",
 							"height": cvs['height'],
 							"width": cvs['width'],
 							"service": { 
 							  "@context": imageServiceContext,
-							  "@id": imageUriBase + str(cvs['image']),
+							  "@id": cvs['baseuri'],
 							  "profile": profileLevel
 							},
 						},
